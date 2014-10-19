@@ -60,16 +60,14 @@ var PanEngine = function(newSetting, win, doc){
             altKey: false,
             shiftKey: false,
             metaKey: false,
-            deltaX: - scrollAmountX,
-            deltaY: - scrollAmountY,
-            delta: 120
+            deltaX: - scrollAmountX * 120,
+            deltaY: - scrollAmountY * 120
         });
         target.dispatchEvent(evt);
-        // document.body.dispatchEvent(evt);
-        // console.log(evt);
-        //do a check, if nothing scrolled, bubble it up to body, manually >.<
+
+        //do a check, if nothing scrolled, bubble it up to body, manually
         //body won't get scrolled by custom event
-        
+
         el = target;  var i = 0;
         while (el) {
             if (Math.abs(el.scrollLeft - left[i]) > Math.abs(scrollAmountX))
@@ -243,8 +241,8 @@ var WinHandTool = function(win, doc, chrome){
     
     
             //remove context menu
-    //prevent context menu if panning amount > 15px
-    var PREVENT_CM_THRESHOLD = 7;
+    //prevent context menu if panning amount > 3px
+    var PREVENT_DEFAULT_THRESHOLD = 3;
 
     
     function panActive(e){
@@ -316,8 +314,10 @@ var WinHandTool = function(win, doc, chrome){
         
         prev = current;
         
-        if (e.which == "2")
+        if (e.which == "2") {
             e.preventDefault();
+            return false;
+        }
     }
     
     function handleMouseUp(e){
@@ -325,9 +325,10 @@ var WinHandTool = function(win, doc, chrome){
             return;
         
         panEngine.slide(current);
-        
-        if (e.which == "2")
+        if (e.which == "2" && amountScrolled > PREVENT_DEFAULT_THRESHOLD) {
             e.preventDefault();
+            return false;
+        }
     }
     
     function handleKeyDown(e){
@@ -363,7 +364,8 @@ var WinHandTool = function(win, doc, chrome){
     }
         
     function handleContextMenu(e){
-        if ((PREVENT_CM_THRESHOLD < amountScrolled) && (GlobalSetting.state == "activated")) 
+
+        if ((PREVENT_DEFAULT_THRESHOLD < amountScrolled) && (GlobalSetting.state == "activated")) 
             return false;
         return true;
     }

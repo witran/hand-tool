@@ -392,7 +392,7 @@ if (OSName === "Windows") (function() {
 
         activation: {
             mouse: "2",
-            key: ["ctrlKey"]
+            key: []
         }
     };
 
