@@ -23,7 +23,7 @@ window.onload = function(){
 
         activation: {
             mouse: (OSName == "Linux" || OSName == "MacOS") ? "2" : "3",
-            key: (OSName == "Linux" || OSName == "MacOS") ? ["ctrlKey"] : []
+            key: []
         }
     };
     

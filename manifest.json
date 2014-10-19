@@ -2,7 +2,7 @@
 	"manifest_version" : 2,
 	"name": "Hand Tool",
 	"description": "Use your Mouse or Stylus to smoothly pan web pages, bringing Photoshop Hand Tool to the web!",
-	"version": "1.2.4",
+	"version": "1.2.5",
 	"permissions": [ 
         "tabs", 
         "http://*/*", 
