@@ -38,7 +38,6 @@ window.onload = function(){
     
     function closeIfFinish(){
         for (var i in finished){
-//            console.log(finished[i]);
             if (!finished[i]) return;
         }
         //otherwise, all are finished
@@ -142,69 +141,4 @@ window.onload = function(){
         deactivate();
     else
         activate();
-        
-    
-    /*
-    storage.get("setting", function(result){
-        setting = result.setting;
-        
-        
-        if (!setting.state) 
-            setting = {state: "activated", setting: null};
-        
-//        alert(setting + " " + setting.state);
-        
-        console.log(setting);
-        
-        if (setting.state == "activated"){
-
-            setting.state = "deactivated";
-            //notify script in page to disable
-            chrome.tabs.executeScript({code: "window.postMessage({setting:{'state': '" + setting.state + "'}, type: 'mm.popup.notify'},'*');"})
-            //set storage to new value
-            storage.set({'setting': setting}, function(){
-                console.log('setting done');
-                
-                chrome.browserAction.setTitle({title: "Hand tool deactivated"});
-                
-                chrome.browserAction.setIcon({path: "default-pointer.png"}, function(){
-                    finished["setIcon"] = true;
-                    //finish icon change
-                    closeIfFinish();
-                });
-                //finish setting
-                notifyAndClose();
-            });
-        }
-        else{
-            setting.state = "activated";
-            //notify script in page to disable
-            chrome.tabs.executeScript({code: "window.postMessage({setting:{'state': '" + setting.state + "'}, type: 'mm.popup.notify'},'*');"})
-
-            //set storage to new value
-            storage.set({'setting': setting}, function(){
-                console.log('setting done');
-                
-                chrome.browserAction.setTitle({title: "Hand tool activated"});
-
-                chrome.browserAction.setIcon({path: "hand-pointer.png"}, function(){
-                    finished["setIcon"] = true;
-                    //finish icon change
-                    closeIfFinish();
-                });
-                //finish setting
-                notifyAndClose();
-            });
-        }
-        
-//        document.getElementById("status").innerHTML = "Hand tool " + setting.state;
-//        document.getElementById("status").style.color = (setting.state=="activated")?"#19B843":"#000";
-//        setTimeout(function(){
-//            finished["setStatus"] = true;
-//            closeIfFinish();
-//        }, 1250);
-    });*/
-    
-    
-    
 };

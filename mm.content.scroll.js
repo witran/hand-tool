@@ -1,3 +1,5 @@
+'use strict';
+
 var PanEngine = function(newSetting, win, doc){
     
     //private fields
@@ -13,13 +15,11 @@ var PanEngine = function(newSetting, win, doc){
     var MAX_SCROLL_TIME = 700;
         
     //sliding rendering interval timer
-//    var timerId;
     var timerIds = [];
-    var state = "stopped";
+    var state = 'stopped';
     //sliding, scrolling
     
-    //private funcs
-    
+    //private funcs    
     function getSign(a){
         return a>0?(1):(-1);
     }
@@ -67,7 +67,6 @@ var PanEngine = function(newSetting, win, doc){
 
         //do a check, if nothing scrolled, bubble it up to body, manually
         //body won't get scrolled by custom event
-
         el = target;  var i = 0;
         while (el) {
             if (Math.abs(el.scrollLeft - left[i]) > Math.abs(scrollAmountX))
@@ -99,43 +98,37 @@ var PanEngine = function(newSetting, win, doc){
     this.reset = function(){
         //receive a mousedown event
         //initiate panning
-//        win.clearInterval(timerId);
         clearIntervals();
-        state = "stopped";
+        state = 'stopped';
     };
     
     this.pan = function(current, prev) {
         try {
-        //receive a mousemove event
-        //perform panning
+            //receive a mousemove event
+            //perform panning
+            var scrollAmountX = (current.x - prev.x) * setting.scale;
+            var scrollAmountY = (current.y - prev.y) * setting.scale;
 
-        var scrollAmountX = (current.x - prev.x) * setting.scale;
-        var scrollAmountY = (current.y - prev.y) * setting.scale;
-        
-//        var target = findScrollableElem(current.target, current.vx, current.vy);
-//        target.scrollLeft -= scrollAmountX;
-//        target.scrollTop -= scrollAmountY;
+            scroll(current.target, scrollAmountX, scrollAmountY, current.e);
 
-        scroll(current.target, scrollAmountX, scrollAmountY, current.e);
+            state = 'panning';            
+
+            return (Math.abs(scrollAmountX) + Math.abs(scrollAmountY));
         } catch (exception) {
-            
+            console.log(exception);
         }
             
-        state = "panning";
-        
-        return (Math.abs(scrollAmountX) + Math.abs(scrollAmountY));
     };
 
     this.slide = function(current) {
         try {
-            if (setting.slide != "yes")
+            if (setting.slide !== 'yes')
                 return;
 
-            state = "sliding";
+            state = 'sliding';
 
             current.vx = trunc(current.vx);
             current.vy = trunc(current.vy);
-
 
             var frictionX = (-1) * getSign(current.vx) * FRICTION_PMS;
             var frictionY = (-1) * getSign(current.vy) * FRICTION_PMS;
@@ -150,14 +143,14 @@ var PanEngine = function(newSetting, win, doc){
                 var newVy = current.vy + (frictionY * dt);
 
                 var stopped = true;
-                if ((signMul(newVx, current.vx) == 1) && (Math.abs(current.vx) > Math.abs(FRICTION_PMS * dt))){
+                if ((signMul(newVx, current.vx) === 1) && (Math.abs(current.vx) > Math.abs(FRICTION_PMS * dt))){
 
                     scroll(current.target, (current.vx * dt + frictionX * dt * dt / 2), 0, current.e);
 
                     current.vx = newVx;
                     stopped = false;
                 }
-                if ((signMul(newVy, current.vy) == 1) && (Math.abs(current.vy) > Math.abs(FRICTION_PMS * dt))){
+                if ((signMul(newVy, current.vy) === 1) && (Math.abs(current.vy) > Math.abs(FRICTION_PMS * dt))){
 
                     scroll(current.target, 0, (current.vy * dt + (frictionY * dt * dt) / 2), current.e);
 
@@ -166,9 +159,8 @@ var PanEngine = function(newSetting, win, doc){
                 }
 
                 if (stopped) {
-//                    win.clearInterval(timerId);
                     clearIntervals();
-                    state = "stopped";
+                    state = 'stopped';
                 }
 
                 prevTime = currentTime;
@@ -191,45 +183,42 @@ var WinHandTool = function(win, doc, chrome){
         //app get only
         //all setting done at option page
     var OSName;
-    if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
-    if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
-    if (navigator.appVersion.indexOf("X11")!=-1) OSName="UNIX";
-    if (navigator.appVersion.indexOf("Linux")!=-1) OSName="Linux";
+    if (navigator.appVersion.indexOf('Win')!==-1) OSName = 'Windows';
+    if (navigator.appVersion.indexOf('Mac')!==-1) OSName = 'MacOS';
+    if (navigator.appVersion.indexOf('X11')!==-1) OSName = 'UNIX';
+    if (navigator.appVersion.indexOf('Linux')!==-1) OSName = 'Linux';
     
     var GlobalSetting = {
-        state: "activated",
+        state: 'activated',
         
         style: {
-            showHand: "true"
+            showHand: 'true'
         },
         
         scroll: {
-            reverse: "yes",
-            slide: "yes",
-            scale: "1.5"
+            reverse: 'yes',
+            slide: 'yes',
+            scale: '1.5'
         },
         
         activation: {
-            mouse: (OSName == "Linux" || OSName == "MacOS") ? "2" : "3",
+            mouse: (OSName === 'Linux' || OSName === 'MacOS') ? '2' : '3',
             key: []
         }
     };
     
     //LOCAL CONTENT APP VARS 
-        //app activation
+
+    //app activation
     var tabState;
-    
-    
-        //pan activation, 
-        //mouse state
-    
-        //messenger api
+
+    //messenger api
     var allowedMsgType = [
         'mm.popup.notify',
         'bg.settingResponse'
     ];
     
-        //MOUSE DATA
+    //MOUSE DATA
     var current, prev;
     
         //SCROLLING ENGINE FIELDS & FUNCS
@@ -241,17 +230,19 @@ var WinHandTool = function(win, doc, chrome){
     
     
             //remove context menu
+
     //prevent context menu if panning amount > 3px
     var PREVENT_DEFAULT_THRESHOLD = 3;
 
     
-    function panActive(e){
-        
-        if ((parseInt(GlobalSetting.activation.mouse) != 0) && 
-            (parseInt(e.which) != parseInt(GlobalSetting.activation.mouse)) ||
-            (GlobalSetting.state == "deactivated"))
+    function panActive(e) {
+        // check if extension is deactivated
+        if ((parseInt(GlobalSetting.activation.mouse) !== 0) && 
+            (parseInt(e.which) !== parseInt(GlobalSetting.activation.mouse)) ||
+            (GlobalSetting.state === 'deactivated'))
             return false;
         
+        // check if activation keys are pressed
         for (var i = 0; i < GlobalSetting.activation.key.length; i++)
             if (!e[GlobalSetting.activation.key[i]])
                 return false;
@@ -259,17 +250,8 @@ var WinHandTool = function(win, doc, chrome){
         return true;
     }
     
-    function actCount(){
-        var count = 0;
-        if (parseInt(GlobalSetting.activation.mouse) != parseInt("0"))
-            count++;
-        count += GlobalSetting.activation.key.length;
-        return count;
-    }
-    
-    
     //main handler - event forwarder
-    function handleMouseDown(e){
+    function handleMouseDown(e) {
         //request a new scroll session
         amountScrolled = 0;
         
@@ -278,15 +260,15 @@ var WinHandTool = function(win, doc, chrome){
         
         panEngine.reset();
         
-        if (e.which == "2")
+        if (e.which == '2')
             e.preventDefault();
     }
     
-    function handleMouseMove(e){
+    function handleMouseMove(e) {
         if (!panActive(e))
             return;
         
-        if (panEngine.getState() == "stopped")
+        if (panEngine.getState() == 'stopped')
             //start a new scroll session
             prev = {
                 x: e.clientX,
@@ -314,65 +296,62 @@ var WinHandTool = function(win, doc, chrome){
         
         prev = current;
         
-        if (e.which == "2") {
+        if (e.which == '2') {
             e.preventDefault();
             return false;
         }
     }
     
-    function handleMouseUp(e){
+    function handleMouseUp(e) {
         if (!panActive(e))
             return;
         
         panEngine.slide(current);
-        if (e.which == "2" && amountScrolled > PREVENT_DEFAULT_THRESHOLD) {
+        if (e.which == '2' && amountScrolled > PREVENT_DEFAULT_THRESHOLD) {
             e.preventDefault();
             return false;
         }
     }
     
-    function handleKeyDown(e){
+    function handleKeyDown(e) {
         //request a new scroll session
-        if (panEngine.getState() == "panning" || !panActive(e))
+        if (panEngine.getState() == 'panning' || !panActive(e))
             return;
         
         panEngine.reset();
     }
     
-    function handleKeyUp(e){
+    function handleKeyUp(e) {
         //this is the first key to disable the scrolling
-        if (!isActivator(e.keyIdentifier) || (panEngine.getState() != "panning"))
+        if (!isActivator(e.keyIdentifier) || (panEngine.getState() !== 'panning'))
             return;
         
         panEngine.slide(current);
-        
-        //perform a slide if laptop case
     }
     
-    function isActivator(key){
-        if (key == "Control")
+    function isActivator(key) {
+        if (key == 'Control')
             for (var i = 0; i < GlobalSetting.activation.key.length; i++){
-                if (GlobalSetting.activation.key[i] == "ctrlKey")
+                if (GlobalSetting.activation.key[i] == 'ctrlKey')
                     return true;
             }
-        if (key == "Alt")
+        if (key == 'Alt')
             for (var i = 0; i < GlobalSetting.activation.key.length; i++){
-                if (GlobalSetting.activation.key[i] == "altKey")
+                if (GlobalSetting.activation.key[i] == 'altKey')
                     return true;
             }
         return false;
     }
         
-    function handleContextMenu(e){
-
-        if ((PREVENT_DEFAULT_THRESHOLD < amountScrolled) && (GlobalSetting.state == "activated")) 
+    function handleContextMenu() {
+        if ((PREVENT_DEFAULT_THRESHOLD < amountScrolled) && (GlobalSetting.state == 'activated')) 
             return false;
         return true;
     }
     
     //SETTING UPDATE related funcs
     //reset app state
-    function clearAppState(){
+    function clearAppState() {
         //stop preventing context menu
         amountScrolled = 0;
         //stop sliding timer
@@ -380,14 +359,14 @@ var WinHandTool = function(win, doc, chrome){
     }
     
     //to trigger an update if jump tab
-    function handleFocus(e){
-        if (tabState == "blur")
+    function handleFocus() {
+        if (tabState == 'blur')
             requestUpdate();
-        tabState = "focus";
+        tabState = 'focus';
     }
     
-    function handleBlur(e){
-        tabState = "blur";
+    function handleBlur() {
+        tabState = 'blur';
     }
     
     //Messenger
@@ -397,14 +376,14 @@ var WinHandTool = function(win, doc, chrome){
         panEngine.updateSetting(GlobalSetting.scroll);
     }
     
-    function requestUpdate(){
-        chrome.runtime.sendMessage({type: "mm.cs.requestSetting"}, function(response) {
+    function requestUpdate() {
+        chrome.runtime.sendMessage({type: 'mm.cs.requestSetting'}, function(response) {
              updateGlobalSetting(response);
-         }) 
+         });
     }
     
-    function messageAllowed(msg){
-        if (msg.source != win)
+    function messageAllowed(msg) {
+        if (msg.source !== win)
             return false;
         
         for (var i = 0; i < allowedMsgType.length; i++)
@@ -414,56 +393,61 @@ var WinHandTool = function(win, doc, chrome){
         return false;
     }
     
-    function handleMessage(msg){
+    function handleMessage(msg) {
         if (!messageAllowed(msg))
             return;
         
-        if (msg.type == "mm.popup.notify" || msg.type == "mm.bg.notify")
+        if (msg.type == 'mm.popup.notify' || msg.type == 'mm.bg.notify')
             updateGlobalSetting(msg.data.setting);
     }
     
-    function init(){
+    function init() {
         //INIT Point
         //mouse and keyboard handlers
-        win.addEventListener("mousemove", handleMouseMove, true);
-        win.addEventListener("mousedown", handleMouseDown, true);
-        win.addEventListener("mouseup", handleMouseUp, true);
+        win.addEventListener('mousemove', handleMouseMove, true);
+        win.addEventListener('mousedown', handleMouseDown, true);
+        win.addEventListener('mouseup', handleMouseUp, true);
 
-        win.addEventListener("keydown", handleKeyDown, true);
-        win.addEventListener("keyup", handleKeyUp, true);
+        win.addEventListener('keydown', handleKeyDown, true);
+        win.addEventListener('keyup', handleKeyUp, true);
         
+        win.addEventListener('focus', handleFocus, true);
+        win.addEventListener('blur', handleBlur, true);
         win.oncontextmenu = handleContextMenu;
-        win.addEventListener("focus", handleFocus, true);
-        win.addEventListener("blur", handleBlur, true);
 
-            //messengers
-        win.addEventListener("message", handleMessage, true);
+        //messengers
+        win.addEventListener('message', handleMessage, true);
 
         //init panEngine
         panEngine = new PanEngine(GlobalSetting, win, doc);
         //init variables
-        tabState = "blur";
+        tabState = 'blur';
         amountScrolled = 0;
-
 
         //finally get a fresh update for setting
         requestUpdate();
     }
+
+    function destroy() {
+        win.removeEventListener('mousemove', handleMouseMove, true);
+        win.removeEventListener('mousedown', handleMouseDown, true);
+        win.removeEventListener('mouseup', handleMouseUp, true);
+
+        win.removeEventListener('keydown', handleKeyDown, true);
+        win.removeEventListener('keyup', handleKeyUp, true);
+
+        win.removeEventListener('focus', handleFocus, true);
+        win.removeEventListener('blur', handleBlur, true);
+        win.oncontextmenu = null;
+    }
     
     this.requestUpdate = requestUpdate;
-    
     this.init = init;
+    this.destroy = destroy;
 };
+
+if (HandTool) HandTool.destroy();
 
 var HandTool = new WinHandTool(window, document, chrome);
 
 HandTool.init();
-
-
-//function handleContextMenu(e){
-//        if ((PREVENT_CM_THRESHOLD < amountScrolled) && (GlobalSetting.state == "activated"))  {
-//            document.getElementsByClassName("html5-context-menu")[0].className += " hid";
-//            return false;
-//        }
-//        return true;
-//    }

@@ -6,7 +6,6 @@
     //while popup needs to be init & disposed multiple times -> unstable
     //background page is where our app runs
 
-//OS Hotfix
 if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
 if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
 if (navigator.appVersion.indexOf("X11")!=-1) OSName="UNIX";
@@ -51,8 +50,27 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendRespond){
     console.log(msg + ", type: " + typeof msg);
     
     //message handler forwarder
-//    alert(msg.type);
     if (msg.type == "mm.cs.requestSetting"){
         sendRespond(getLocalSetting());
     }
-})
+});
+
+var manifest = chrome.app.getDetails();
+
+var injectScript = function(tab) {
+    var scripts = manifest.content_scripts[0].js;
+    for (var i = 0; i < scripts.length; i++)
+        chrome.tabs.executeScript(tab.id, {
+            file: scripts[i]
+        });
+}
+
+chrome.windows.getAll({
+    populate: true
+}, function(windows) {
+    windows.forEach(function(w) {
+        w.tabs.forEach(function(tab) {
+            injectScript(tab);
+        });
+    })
+});
