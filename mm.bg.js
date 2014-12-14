@@ -47,7 +47,7 @@ function getLocalSetting(){
 }
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendRespond){
-    console.log(msg + ", type: " + typeof msg);
+    // console.log(msg + ", type: " + typeof msg);
     
     //message handler forwarder
     if (msg.type == "mm.cs.requestSetting"){
@@ -70,7 +70,8 @@ chrome.windows.getAll({
 }, function(windows) {
     windows.forEach(function(w) {
         w.tabs.forEach(function(tab) {
-            injectScript(tab);
+            if (tab.url.indexOf('chrome') !== 0)
+                injectScript(tab);
         });
     })
 });

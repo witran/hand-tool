@@ -70,7 +70,7 @@ if (OSName === "Windows") (function() {
         localStorage["setting"] = JSON.stringify(setting);
         
         //notify this option page
-        HandTool.requestUpdate();
+        handTool.requestUpdate();
         
         //notify browser action to change state
         
@@ -80,7 +80,7 @@ if (OSName === "Windows") (function() {
         setting.state = "deactivated";
         //notify script in page to disable
         
-        HandTool.requestUpdate();
+        handTool.requestUpdate();
         
         //set storage to new value
         localStorage["setting"] = JSON.stringify(setting);
@@ -94,7 +94,7 @@ if (OSName === "Windows") (function() {
         setting.state = "activated";
         //notify script in page to disable
         
-        HandTool.requestUpdate();
+        handTool.requestUpdate();
         
         //set storage to new value
         localStorage["setting"] = JSON.stringify(setting);
@@ -442,7 +442,7 @@ if (OSName === "Windows") (function() {
         localStorage["setting"] = JSON.stringify(setting);
         
         //notify this option page
-        HandTool.requestUpdate();
+        handTool.requestUpdate();
         
         //notify browser action to change state
         
@@ -452,7 +452,7 @@ if (OSName === "Windows") (function() {
         setting.state = "deactivated";
         //notify script in page to disable
         
-        HandTool.requestUpdate();
+        handTool.requestUpdate();
         
         //set storage to new value
         localStorage["setting"] = JSON.stringify(setting);
@@ -466,7 +466,7 @@ if (OSName === "Windows") (function() {
         setting.state = "activated";
         //notify script in page to disable
         
-        HandTool.requestUpdate();
+        handTool.requestUpdate();
         
         //set storage to new value
         localStorage["setting"] = JSON.stringify(setting);

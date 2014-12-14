@@ -174,10 +174,10 @@ var PanEngine = function(newSetting, win, doc){
         setting = newSetting;
     };
     
-    this.getState = function(){return state;};
+    this.getState = function(){ return state; };
 };
 
-var WinHandTool = function(win, doc, chrome){
+var HandTool = function(win, doc, chrome, handToolId){
     
     //GLOBAL SETTINGS
         //app get only
@@ -214,8 +214,8 @@ var WinHandTool = function(win, doc, chrome){
 
     //messenger api
     var allowedMsgType = [
-        'mm.popup.notify',
-        'bg.settingResponse'
+        'mm.cs.destroy',
+        'mm.popup.notify'
     ];
     
     //MOUSE DATA
@@ -259,17 +259,13 @@ var WinHandTool = function(win, doc, chrome){
             return;
         
         panEngine.reset();
-        
+
         if (e.which == '2')
             e.preventDefault();
     }
     
     function handleMouseMove(e) {
-        if (!panActive(e))
-            return;
-        
         if (panEngine.getState() == 'stopped')
-            //start a new scroll session
             prev = {
                 x: e.clientX,
                 y: e.clientY,
@@ -279,6 +275,9 @@ var WinHandTool = function(win, doc, chrome){
                 target: e.target,
                 e: e
             };
+
+        if (!panActive(e))
+            return;
         
         var t = e.timeStamp;
         
@@ -286,8 +285,8 @@ var WinHandTool = function(win, doc, chrome){
             x: e.clientX,
             y: e.clientY,
             time: t,
-            vx: (t > prev.time)?((e.clientX - prev.x) / (t - prev.time)):0,
-            vy: (t > prev.time)?((e.clientY - prev.y) / (t - prev.time)):0,
+            vx: (t > prev.time) ? ((e.clientX - prev.x) / (t - prev.time)) : 0,
+            vy: (t > prev.time) ? ((e.clientY - prev.y) / (t - prev.time)) : 0,
             target: prev.target,
             e: e
         };
@@ -307,6 +306,8 @@ var WinHandTool = function(win, doc, chrome){
             return;
         
         panEngine.slide(current);
+        current = null;
+
         if (e.which == '2' && amountScrolled > PREVENT_DEFAULT_THRESHOLD) {
             e.preventDefault();
             return false;
@@ -314,28 +315,30 @@ var WinHandTool = function(win, doc, chrome){
     }
     
     function handleKeyDown(e) {
-        //request a new scroll session
-        if (panEngine.getState() == 'panning' || !panActive(e))
+        // request a new scroll session
+        if (panEngine.getState() === 'panning' || !panActive(e))
             return;
         
         panEngine.reset();
     }
     
     function handleKeyUp(e) {
-        //this is the first key to disable the scrolling
-        if (!isActivator(e.keyIdentifier) || (panEngine.getState() !== 'panning'))
+        // this is the first key to disable the scrolling
+        if (!isActivator(e.keyCode) || (panEngine.getState() !== 'panning'))
             return;
         
         panEngine.slide(current);
     }
     
-    function isActivator(key) {
-        if (key == 'Control')
+    function isActivator(keyCode) {
+        // Control
+        if (keyCode == 17)
             for (var i = 0; i < GlobalSetting.activation.key.length; i++){
                 if (GlobalSetting.activation.key[i] == 'ctrlKey')
                     return true;
             }
-        if (key == 'Alt')
+        // Alt
+        if (keyCode == 18)
             for (var i = 0; i < GlobalSetting.activation.key.length; i++){
                 if (GlobalSetting.activation.key[i] == 'altKey')
                     return true;
@@ -378,7 +381,7 @@ var WinHandTool = function(win, doc, chrome){
     
     function requestUpdate() {
         chrome.runtime.sendMessage({type: 'mm.cs.requestSetting'}, function(response) {
-             updateGlobalSetting(response);
+            updateGlobalSetting(response);
          });
     }
     
@@ -387,7 +390,7 @@ var WinHandTool = function(win, doc, chrome){
             return false;
         
         for (var i = 0; i < allowedMsgType.length; i++)
-            if (msg.type == allowedMsgType[i])
+            if (msg.data.type == allowedMsgType[i])
                 return true;
         
         return false;
@@ -396,9 +399,12 @@ var WinHandTool = function(win, doc, chrome){
     function handleMessage(msg) {
         if (!messageAllowed(msg))
             return;
-        
-        if (msg.type == 'mm.popup.notify' || msg.type == 'mm.bg.notify')
+
+        if (msg.data.type === 'mm.popup.notify')
             updateGlobalSetting(msg.data.setting);
+
+        if (msg.data.type === 'mm.cs.destroy' && msg.data.exclude != handToolId)
+            destroy();
     }
     
     function init() {
@@ -438,16 +444,16 @@ var WinHandTool = function(win, doc, chrome){
 
         win.removeEventListener('focus', handleFocus, true);
         win.removeEventListener('blur', handleBlur, true);
-        win.oncontextmenu = null;
+
+        win.removeEventListener('message', handleMessage, true);
     }
     
     this.requestUpdate = requestUpdate;
     this.init = init;
-    this.destroy = destroy;
 };
 
-if (HandTool) HandTool.destroy();
-
-var HandTool = new WinHandTool(window, document, chrome);
-
-HandTool.init();
+// Init point
+var handToolId = + new Date();
+window.postMessage({type: 'mm.cs.destroy', exclude: handToolId},'*');
+var handTool = new HandTool(window, document, chrome, handToolId);
+handTool.init();
