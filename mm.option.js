@@ -1,5 +1,7 @@
 'use strict';
 
+var OSName;
+
 if (navigator.appVersion.indexOf('Win')!=-1) OSName='Windows';
 if (navigator.appVersion.indexOf('Mac')!=-1) OSName='MacOS';
 if (navigator.appVersion.indexOf('X11')!=-1) OSName='UNIX';
@@ -389,9 +391,6 @@ if (OSName === 'Windows') (function() {
         }
     };
 
-
-
-
     String.prototype.width = function(font) {
       var f = font || '12px arial',
           o = $('<div>' + this + '</div>')
@@ -545,7 +544,7 @@ if (OSName === 'Windows') (function() {
         spdMinus = $('#minus'),
         actCtrl = $('#act-ctrl'),
         actM2 = $('#act-M2'),
-        actM3 = $('#act-M3');
+        actM3 = $('#act-M3'),
         actSlash = $('#act-slash');
 
     actM3.css('visibility', 'hidden');
