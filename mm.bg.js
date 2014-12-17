@@ -65,13 +65,20 @@ var injectScript = function(tab) {
         });
 }
 
+var excludedPrefix = [
+    'https://chrome.google.com/webstore',
+    'chrome'
+]
+
 chrome.windows.getAll({
     populate: true
 }, function(windows) {
     windows.forEach(function(w) {
         w.tabs.forEach(function(tab) {
-            if (tab.url.indexOf('chrome') !== 0)
-                injectScript(tab);
+            for (i = 0; i < excludedPrefix.length; i++)
+                if (tab.url.indexOf(excludedPrefix[i] === 0))
+                    return;
+            injectScript(tab);
         });
     })
 });

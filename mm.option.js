@@ -156,9 +156,13 @@ if (OSName === 'Windows') (function() {
         else
             setDark(actCtrl);
         
+
+        setDark(actM1); 
         setDark(actM2); 
-        setDark(actM3);
+        setDark(actM3); 
         
+        if (setting.activation.mouse == '1')
+            setLight(actM1);
         if (setting.activation.mouse == '2')
             setLight(actM2);
         if (setting.activation.mouse == '3')
@@ -176,6 +180,8 @@ if (OSName === 'Windows') (function() {
         var count = 0;
         if (!isDark(actCtrl))
             count++;
+        if (!isDark(actM1))
+            count++;
         if (!isDark(actM2))
             count++;
         if (!isDark(actM3))
@@ -183,7 +189,9 @@ if (OSName === 'Windows') (function() {
         return count;
     }
 
-    function isValidActChange(){
+    function isValidActChange(btn){
+        if (btn === actCtrl && !isDark(actM1))
+            return false;
         return (actCount() >= 2);
     }
 
@@ -204,6 +212,7 @@ if (OSName === 'Windows') (function() {
         spdPlus = $('#plus'),
         spdMinus = $('#minus'),
         actCtrl = $('#act-ctrl'),
+        actM1 = $('#act-M1'),
         actM2 = $('#act-M2'),
         actM3 = $('#act-M3');
 
@@ -291,14 +300,27 @@ if (OSName === 'Windows') (function() {
 
     //ACTIVATION SETTINGS
     actCtrl.click(function(){
-        if (isDark($(this))){
+        if (isDark(actCtrl)){
             setting.activation.key = ['ctrlKey'];
         }
         else{
-            if (!isValidActChange()) return;
+            if (!isValidActChange(actCtrl)) return;
             setting.activation.key = [];
         }
         
+        putSetting(setting);
+        updateUI();
+    });
+
+    actM1.click(function() {
+        if (isDark(actM1)) {
+            setting.activation.mouse = '1';
+            setting.activation.key = ['ctrlKey'];
+        } else {
+            if (!isValidActChange(actM1)) return;
+            setting.activation.mouse = '0';
+            setting.activation.key = '';
+        }
         putSetting(setting);
         updateUI();
     });
@@ -310,7 +332,7 @@ if (OSName === 'Windows') (function() {
         }
         else{
             //click to light is simply turning off
-            if (!isValidActChange()) return;
+            if (!isValidActChange(actM2)) return;
             setting.activation.mouse = '0';
         }
         
@@ -325,7 +347,7 @@ if (OSName === 'Windows') (function() {
         }
         else{
             //click to light is simply turning off
-            if (!isValidActChange()) return;
+            if (!isValidActChange(actM3)) return;
             setting.activation.mouse = '0';
         }
         
@@ -371,7 +393,8 @@ if (OSName === 'Windows') (function() {
         updateUI();
     });
 
-})(); else (function() {
+})(); 
+else (function() {
     //show option data initilially
     var defaultSetting = {
         state: 'activated',
@@ -439,7 +462,6 @@ if (OSName === 'Windows') (function() {
         handTool.requestUpdate();
         
         //notify browser action to change state
-        
     }
 
     function deactivate(){
@@ -496,15 +518,21 @@ if (OSName === 'Windows') (function() {
     //    else
     //        $('#speed-responsive').text('pixel');
         
-        if (setting.activation.key.length == 1)
+        if (setting.activation.key.length === 1)
             setLight(actCtrl);
         else
             setDark(actCtrl);
         
+        setDark(actM1); 
         setDark(actM2); 
+        setDark(actM3); 
         
+        if (setting.activation.mouse == '1')
+            setLight(actM1);
         if (setting.activation.mouse == '2')
             setLight(actM2);
+        if (setting.activation.mouse == '3')
+            setLight(actM3);
         
         updateResponsiveText();
     }
@@ -520,10 +548,14 @@ if (OSName === 'Windows') (function() {
             count++;
         if (!isDark(actM2))
             count++;
+        if (!isDark(actM1))
+            count++;
         return count;
     }
 
-    function isValidActChange(){
+    function isValidActChange(btn){
+        if (btn === actCtrl && !isDark(actM1))
+            return false;
         return (actCount() >= 2);
     }
 
@@ -543,12 +575,14 @@ if (OSName === 'Windows') (function() {
         spdPlus = $('#plus'),
         spdMinus = $('#minus'),
         actCtrl = $('#act-ctrl'),
+        actM1 = $('#act-M1'),
         actM2 = $('#act-M2'),
-        actM3 = $('#act-M3'),
-        actSlash = $('#act-slash');
+        actM3 = $('#act-M3');
 
     actM3.css('visibility', 'hidden');
-    actSlash.css('visibility', 'hidden');
+    console.log($('.act-slash').last());
+    console.log($('.act-slash'));
+    $('.act-slash').last().css('visibility', 'hidden');
 
     //set handlers
     //app ON OFF SETTINGS
@@ -630,30 +664,37 @@ if (OSName === 'Windows') (function() {
     });
 
     //ACTIVATION SETTINGS
-    actCtrl.click(function(){
-        if (isDark($(this))){
+    actCtrl.click(function() {
+        if (isDark(actCtrl)) {
             setting.activation.key = ['ctrlKey'];
-        }
-        else{
-            if (!isValidActChange()) return;
+        } else {
+            if (!isValidActChange(actCtrl)) return;
             setting.activation.key = [];
-        }
-        
+        }        
         putSetting(setting);
         updateUI();
     });
 
-    actM2.click(function(){
-        if (isDark(actM2)){
-            //click to dark is toggle
-            setting.activation.mouse = '2';
+    actM1.click(function() {
+        if (isDark(actM1)) {
+            setting.activation.mouse = '1';
+            setting.activation.key = ['ctrlKey'];
+        } else {
+            if (!isValidActChange(actM1)) return;
+            setting.activation.mouse = '0';
+            setting.activation.key = '';
         }
-        else{
-            //click to light is simply turning off
-            if (!isValidActChange()) return;
+        putSetting(setting);
+        updateUI();
+    });
+
+    actM2.click(function() {
+        if (isDark(actM2)) {
+            setting.activation.mouse = '2';
+        } else {
+            if (!isValidActChange(actM2)) return;
             setting.activation.mouse = '0';
         }
-        
         putSetting(setting);
         updateUI();
     });
@@ -695,9 +736,4 @@ if (OSName === 'Windows') (function() {
         putSetting(setting);
         updateUI();
     });
-
-
 })();
-
-
-
