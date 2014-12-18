@@ -60,8 +60,8 @@ var Midas = function(newSetting, win, doc){
             altKey: false,
             shiftKey: false,
             metaKey: false,
-            deltaX: - scrollAmountX * 120,
-            deltaY: - scrollAmountY * 120
+            deltaX: target.type == 'application/pdf' ? - scrollAmountX : - scrollAmountX * 120,
+            deltaY: target.type == 'application/pdf' ? - scrollAmountY : - scrollAmountY * 120
         });
         target.dispatchEvent(evt);
 
