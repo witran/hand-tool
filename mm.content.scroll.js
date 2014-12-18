@@ -233,28 +233,13 @@ var HandTool = function(win, doc, chrome, handToolId){
 
     //prevent context menu if panning amount > 3px
     var PREVENT_DEFAULT_THRESHOLD = 3;
-
-    function panActive(e) {
-        // check if extension is deactivated
-        if ((parseInt(GlobalSetting.activation.mouse) !== 0) && 
-            (parseInt(e.which) !== parseInt(GlobalSetting.activation.mouse)) ||
-            (GlobalSetting.state === 'deactivated'))
-            return false;
-        
-        // check if activation keys are pressed
-        for (var i = 0; i < GlobalSetting.activation.key.length; i++)
-            if (!e[GlobalSetting.activation.key[i]])
-                return false;
-        
-        return true;
-    }
     
     //main handler - event forwarder
     function handleMouseDown(e) {
         //request a new scroll session
         amountScrolled = 0;
         
-        if (!panActive(e))
+        if (!isLastActivator(e))
             return;
 
         if (GlobalSetting.activation.mouse === '1' && 
@@ -263,6 +248,7 @@ var HandTool = function(win, doc, chrome, handToolId){
             injectionTargets.forEach(function(element) {
                 element.webkitUserSelect = 'none';
             });
+            console.log('start grab');
             document.body.style.cursor = '-webkit-grabbing';
         }
 
@@ -284,7 +270,7 @@ var HandTool = function(win, doc, chrome, handToolId){
                 e: e
             };
 
-        if (!panActive(e))
+        if (!isLastActivator(e))
             return;
         
         var t = e.timeStamp;
@@ -311,7 +297,7 @@ var HandTool = function(win, doc, chrome, handToolId){
     
     function handleMouseUp(e) {
         // this is the first of the combination to be removed
-        if (!panActive(e))
+        if (!isLastActivator(e))
             return;
         
         if (GlobalSetting.activation.mouse === '1' && 
@@ -348,11 +334,12 @@ var HandTool = function(win, doc, chrome, handToolId){
         if (GlobalSetting.activation.mouse === '1' && 
             GlobalSetting.activation.key[0] === 'ctrlKey') {
             document.body.style.webkitUserSelect = 'none'; 
-            document.body.style.cursor = '-webkit-grab';
+            if (document.body.style.cursor.indexOf('-webkit-grab') !== 0)
+                document.body.style.cursor = '-webkit-grab';
         }
 
         // request a new scroll session
-        if (midas.getState() === 'panning' || !panActive(e))
+        if (midas.getState() === 'panning' || !isLastActivator(e))
             return;
         
         // if (GlobalSetting.activation.mouse === '1' && 
@@ -382,13 +369,28 @@ var HandTool = function(win, doc, chrome, handToolId){
         }
 
         // this is the first of the combination to be removed
-        if (!isActivator(e.keyCode) || (midas.getState() !== 'panning'))
+        if (!isActivatorKey(e.keyCode) || (midas.getState() !== 'panning'))
             return;
 
         midas.slide(current);
     }
+
+    function isLastActivator(e) {
+        // check if extension is deactivated
+        if ((parseInt(GlobalSetting.activation.mouse) !== 0) && 
+            (parseInt(e.which) !== parseInt(GlobalSetting.activation.mouse)) ||
+            (GlobalSetting.state === 'deactivated'))
+            return false;
+        
+        // check if activation keys are pressed
+        for (var i = 0; i < GlobalSetting.activation.key.length; i++)
+            if (!e[GlobalSetting.activation.key[i]])
+                return false;
+        
+        return true;
+    }
     
-    function isActivator(keyCode) {
+    function isActivatorKey(keyCode) {
         // Control
         if (keyCode == 17)
             for (var i = 0; i < GlobalSetting.activation.key.length; i++){
