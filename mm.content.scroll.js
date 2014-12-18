@@ -1,6 +1,6 @@
 'use strict';
 
-var PanEngine = function(newSetting, win, doc){
+var Midas = function(newSetting, win, doc){
     
     //private fields
         //setting
@@ -222,7 +222,7 @@ var HandTool = function(win, doc, chrome, handToolId){
     var current, prev;
     
         //SCROLLING ENGINE FIELDS & FUNCS
-    var panEngine; 
+    var midas; 
     var amountScrolled;
     
         //STYLING FIELDS & FUNCS
@@ -234,7 +234,6 @@ var HandTool = function(win, doc, chrome, handToolId){
     //prevent context menu if panning amount > 3px
     var PREVENT_DEFAULT_THRESHOLD = 3;
 
-    
     function panActive(e) {
         // check if extension is deactivated
         if ((parseInt(GlobalSetting.activation.mouse) !== 0) && 
@@ -257,15 +256,24 @@ var HandTool = function(win, doc, chrome, handToolId){
         
         if (!panActive(e))
             return;
-        
-        panEngine.reset();
 
-        if (e.which == '2')
+        if (GlobalSetting.activation.mouse === '1' && 
+            GlobalSetting.activation.key[0] === 'ctrlKey') {
+            injectionTargets.push(e.target);
+            injectionTargets.forEach(function(element) {
+                element.webkitUserSelect = 'none';
+            });
+            document.body.style.cursor = '-webkit-grabbing';
+        }
+
+        midas.reset();
+
+        if (e.which == '2' || e.which == '1')
             e.preventDefault();
     }
     
     function handleMouseMove(e) {
-        if (panEngine.getState() == 'stopped')
+        if (midas.getState() == 'stopped')
             prev = {
                 x: e.clientX,
                 y: e.clientY,
@@ -291,43 +299,93 @@ var HandTool = function(win, doc, chrome, handToolId){
             e: e
         };
         
-        amountScrolled += panEngine.pan(current, prev);
+        amountScrolled += midas.pan(current, prev);
         
         prev = current;
         
-        if (e.which == '2') {
+        if (e.which == '2' || e.which == '1') {
             e.preventDefault();
             return false;
         }
     }
     
     function handleMouseUp(e) {
+        // this is the first of the combination to be removed
         if (!panActive(e))
             return;
         
-        panEngine.slide(current);
+        if (GlobalSetting.activation.mouse === '1' && 
+            GlobalSetting.activation.key[0] === 'ctrlKey') {
+            document.body.style.cursor = '-webkit-grab';
+        }
+
+        midas.slide(current);
         current = null;
 
-        if (e.which == '2' && amountScrolled > PREVENT_DEFAULT_THRESHOLD) {
+        if ((e.which == '2' || e.which == '1') && amountScrolled > PREVENT_DEFAULT_THRESHOLD) {
             e.preventDefault();
             return false;
         }
     }
-    
+
+    // var styles = {
+    //     disableSelect: '-webkit-user-select: none !important;',
+    //     openHand: '',
+    //     closedHand: ''
+    // }
+    var injectionTargets = [];
+
     function handleKeyDown(e) {
+        // sln 1
+        // var bodyStyle = document.body.getAttribute('style');
+        // if ((!bodyStyle || bodyStyle.indexOf(styles.disableSelect) === -1) &&
+        //     GlobalSetting.activation.mouse === '1' && 
+        //     GlobalSetting.activation.key[0] === 'ctrlKey') {
+        //     document.body.setAttribute('style', (bodyStyle ? bodyStyle : '') + styles.disableSelect);
+        // }
+
+        // sln 2    
+        if (GlobalSetting.activation.mouse === '1' && 
+            GlobalSetting.activation.key[0] === 'ctrlKey') {
+            document.body.style.webkitUserSelect = 'none'; 
+            document.body.style.cursor = '-webkit-grab';
+        }
+
         // request a new scroll session
-        if (panEngine.getState() === 'panning' || !panActive(e))
+        if (midas.getState() === 'panning' || !panActive(e))
             return;
         
-        panEngine.reset();
+        // if (GlobalSetting.activation.mouse === '1' && 
+        //     GlobalSetting.activation.key[0] === 'ctrlKey') {
+        // }
+
+        midas.reset();
     }
     
     function handleKeyUp(e) {
-        // this is the first key to disable the scrolling
-        if (!isActivator(e.keyCode) || (panEngine.getState() !== 'panning'))
+        // sln 1
+        // var bodyStyle = document.body.getAttribute('style');
+        // if (bodyStyle && GlobalSetting.activation.mouse === '1' && 
+        //     GlobalSetting.activation.key[0] === 'ctrlKey')
+        //     document.body.setAttribute('style', 
+        //         bodyStyle.replace(styles.disableSelect, ''));
+
+        // sln 2
+        if (GlobalSetting.activation.mouse === '1' && 
+            GlobalSetting.activation.key[0] === 'ctrlKey') {
+            document.body.style.webkitUserSelect = '';
+            injectionTargets.forEach(function(element) {
+                element.webkitUserSelect = '';
+            });
+            injectionTargets = [];
+            document.body.style.cursor = '';
+        }
+
+        // this is the first of the combination to be removed
+        if (!isActivator(e.keyCode) || (midas.getState() !== 'panning'))
             return;
-        
-        panEngine.slide(current);
+
+        midas.slide(current);
     }
     
     function isActivator(keyCode) {
@@ -358,7 +416,7 @@ var HandTool = function(win, doc, chrome, handToolId){
         //stop preventing context menu
         amountScrolled = 0;
         //stop sliding timer
-        panEngine.reset();
+        midas.reset();
     }
     
     //to trigger an update if jump tab
@@ -376,7 +434,7 @@ var HandTool = function(win, doc, chrome, handToolId){
     function updateGlobalSetting(newGlobalSetting){
         clearAppState();
         GlobalSetting = newGlobalSetting;
-        panEngine.updateSetting(GlobalSetting.scroll);
+        midas.updateSetting(GlobalSetting.scroll);
     }
     
     function requestUpdate() {
@@ -424,8 +482,8 @@ var HandTool = function(win, doc, chrome, handToolId){
         //messengers
         win.addEventListener('message', handleMessage, true);
 
-        //init panEngine
-        panEngine = new PanEngine(GlobalSetting, win, doc);
+        //init midas
+        midas = new Midas(GlobalSetting, win, doc);
         //init variables
         tabState = 'blur';
         amountScrolled = 0;

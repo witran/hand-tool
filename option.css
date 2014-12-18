@@ -1,6 +1,6 @@
-*{
+/**{
     cursor: default;
-}
+}*/
 a {
     cursor: pointer;
 }
@@ -124,7 +124,7 @@ h4{ color: #AAAAAA; font-weight: 100; padding: 0px; margin: 0px; margin-bottom: 
     color: #DDDDDD;
 }
 .opt-cnt{
-    width: 500px;
+    width: 520px;
     padding-left: 20px;
 }
 
@@ -185,7 +185,7 @@ h4{ color: #AAAAAA; font-weight: 100; padding: 0px; margin: 0px; margin-bottom: 
 }
 
 .li-1{
-    padding-bottom: 14px;
+    padding-bottom: 20px;
 }
 .ul-2, .li-2{
     list-style-type: circle;
@@ -210,4 +210,9 @@ h4, .ul-1, .li-1, speedInput{
 ::selection{
     color: white;
     background: black;
+}
+
+.foot-note {
+    font-size: 13px;
+    color: #696969;
 }

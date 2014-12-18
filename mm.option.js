@@ -106,6 +106,9 @@ if (OSName === 'Windows') (function() {
             if (setting.activation.key[0] == 'ctrlKey')
                 activation = 'Control';
             
+            if (setting.activation.mouse == '1')
+                activation += ' + Left Mouse';
+            else
             if (setting.activation.mouse == '2')
                 activation += ' + Middle Mouse';
             else
@@ -113,6 +116,9 @@ if (OSName === 'Windows') (function() {
                 activation += ' + Right Mouse';
         }
         else {
+            if (setting.activation.mouse == '1')
+                activation += ' + Left Mouse';
+            else
             if (setting.activation.mouse == '2')
                 activation = 'Middle Mouse';
             else
@@ -307,7 +313,6 @@ if (OSName === 'Windows') (function() {
             if (!isValidActChange(actCtrl)) return;
             setting.activation.key = [];
         }
-        
         putSetting(setting);
         updateUI();
     });
@@ -319,7 +324,6 @@ if (OSName === 'Windows') (function() {
         } else {
             if (!isValidActChange(actM1)) return;
             setting.activation.mouse = '0';
-            setting.activation.key = '';
         }
         putSetting(setting);
         updateUI();
@@ -335,7 +339,6 @@ if (OSName === 'Windows') (function() {
             if (!isValidActChange(actM2)) return;
             setting.activation.mouse = '0';
         }
-        
         putSetting(setting);
         updateUI();
     });
@@ -350,7 +353,6 @@ if (OSName === 'Windows') (function() {
             if (!isValidActChange(actM3)) return;
             setting.activation.mouse = '0';
         }
-        
         putSetting(setting);
         updateUI();
     });
@@ -580,8 +582,8 @@ else (function() {
         actM3 = $('#act-M3');
 
     actM3.css('visibility', 'hidden');
-    console.log($('.act-slash').last());
-    console.log($('.act-slash'));
+    if (OSName === 'MacOS')
+        actCtrl.text('Command');
     $('.act-slash').last().css('visibility', 'hidden');
 
     //set handlers
@@ -682,7 +684,6 @@ else (function() {
         } else {
             if (!isValidActChange(actM1)) return;
             setting.activation.mouse = '0';
-            setting.activation.key = '';
         }
         putSetting(setting);
         updateUI();
