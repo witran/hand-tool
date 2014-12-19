@@ -68,66 +68,64 @@ if (OSName === 'Windows') (function() {
         elem.attr('class', lightClass.replace('light', 'dark'));
     }
 
+    function updateBrowserActionTitle(setting) {
+        //notify browser action to change state
+        if (setting.state === 'activated') {
+            var activation = '';
+            if (setting.activation.key.length) {
+                if (setting.activation.key[0] == 'ctrlKey')
+                    activation = 'Control';
+                if (setting.activation.mouse == '1')
+                    activation += ' + Left Mouse';
+                else
+                if (setting.activation.mouse == '2')
+                    activation += ' + Middle Mouse';
+                else
+                if (setting.activation.mouse == '3')
+                    activation += ' + Right Mouse';
+            }
+            else {
+                if (setting.activation.mouse == '2')
+                    activation = 'Middle Mouse';
+                else
+                if (setting.activation.mouse == '3')
+                    activation = 'Right Mouse';
+            }
+            chrome.browserAction.setTitle({title: 'Hand tool activated (' + activation + ')'});        
+        } else {
+            chrome.browserAction.setTitle({title: 'Hand tool deactivated'});
+        }
+    }
+
     function putSetting(setting) {
         localStorage['setting'] = JSON.stringify(setting);
         
         //notify this option page
         handTool.requestUpdate();
-        
-        //notify browser action to change state
-        
+        updateBrowserActionTitle(setting);
     }
 
     function deactivate(){
         setting.state = 'deactivated';
-        //notify script in page to disable
-        
-        handTool.requestUpdate();
         
         //set storage to new value
         localStorage['setting'] = JSON.stringify(setting);
 
-        chrome.browserAction.setTitle({title: 'Hand tool deactivated'});
-
+        //notify script in page to disable
+        handTool.requestUpdate();
+        updateBrowserActionTitle(setting);
         chrome.browserAction.setIcon({path: 'default-pointer.png'});
     }
 
     function activate(){
         setting.state = 'activated';
-        //notify script in page to disable
-        
-        handTool.requestUpdate();
         
         //set storage to new value
         localStorage['setting'] = JSON.stringify(setting);
         
-        var activation = '';
-        if (setting.activation.key.length) {
-            if (setting.activation.key[0] == 'ctrlKey')
-                activation = 'Control';
-            
-            if (setting.activation.mouse == '1')
-                activation += ' + Left Mouse';
-            else
-            if (setting.activation.mouse == '2')
-                activation += ' + Middle Mouse';
-            else
-            if (setting.activation.mouse == '3')
-                activation += ' + Right Mouse';
-        }
-        else {
-            if (setting.activation.mouse == '1')
-                activation += ' + Left Mouse';
-            else
-            if (setting.activation.mouse == '2')
-                activation = 'Middle Mouse';
-            else
-            if (setting.activation.mouse == '3')
-                activation = 'Right Mouse';
-        }
-
-        chrome.browserAction.setTitle({title: 'Hand tool activated (' + activation + ')'});
-
+        //notify script in page to disable
+        handTool.requestUpdate();
+        updateBrowserActionTitle(setting);
         chrome.browserAction.setIcon({path: 'hand-pointer.png'});
     }
 
@@ -488,6 +486,30 @@ else (function() {
         
         //set storage to new value
         localStorage['setting'] = JSON.stringify(setting);
+
+        var activation = '';
+        if (setting.activation.key.length) {
+            if (setting.activation.key[0] == 'ctrlKey')
+                activation = (OSName == 'MacOS') ? 'Command' : 'Control';
+            
+            if (setting.activation.mouse == '1')
+                activation += ' + Left Mouse';
+            else
+            if (setting.activation.mouse == '2')
+                activation += ' + Middle Mouse';
+            else
+            if (setting.activation.mouse == '3')
+                activation += ' + Right Mouse';
+        }
+        else {
+            if (setting.activation.mouse == '2')
+                activation = 'Middle Mouse';
+            else
+            if (setting.activation.mouse == '3')
+                activation = 'Right Mouse';
+        }
+
+        chrome.browserAction.setTitle({title: 'Hand tool activated (' + activation + ')'});
 
         chrome.browserAction.setTitle({title: 'Hand tool activated'});
 
