@@ -35,6 +35,6 @@
     }],
 
     "web_accessible_resources": [
-       "bg.png", "bgBtm.jpg", "mm.inpage.js", "jquery.min.js", "openhand.cur", "closedhand.cur"
+       "mm.inpage.js", "jquery.min.js", "openhand.cur", "closedhand.cur"
      ]
 }

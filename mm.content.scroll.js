@@ -47,6 +47,15 @@ var Midas = function(newSetting, win, doc){
             el = el.parentElement;
         }
         
+        var elementScale;
+
+        if (target.type === 'application/pdf') 
+            elementScale = 1;
+        else if (target.type === 'application/x-shockwave-flash')
+            elementScale = 120;
+        else 
+            elementScale = 120;
+
         var evt = new WheelEvent(
             'wheel', {
             bubbles: true,
@@ -60,8 +69,8 @@ var Midas = function(newSetting, win, doc){
             altKey: false,
             shiftKey: false,
             metaKey: false,
-            deltaX: target.type == 'application/pdf' ? - scrollAmountX : - scrollAmountX * 120,
-            deltaY: target.type == 'application/pdf' ? - scrollAmountY : - scrollAmountY * 120
+            deltaX: - scrollAmountX * elementScale,
+            deltaY: - scrollAmountY * elementScale
         });
         target.dispatchEvent(evt);
 
@@ -242,13 +251,12 @@ var HandTool = function(win, doc, chrome, handToolId){
         if (!isLastActivator(e))
             return;
 
-        if (GlobalSetting.activation.mouse === '1' && 
+        if (GlobalSetting.activation.mouse !== '0' && 
             GlobalSetting.activation.key[0] === 'ctrlKey') {
             injectionTargets.push(e.target);
             injectionTargets.forEach(function(element) {
                 element.webkitUserSelect = 'none';
             });
-            console.log('start grab');
             document.body.style.cursor = '-webkit-grabbing';
         }
 
@@ -300,7 +308,7 @@ var HandTool = function(win, doc, chrome, handToolId){
         if (!isLastActivator(e))
             return;
         
-        if (GlobalSetting.activation.mouse === '1' && 
+        if (GlobalSetting.activation.mouse !== '0' && 
             GlobalSetting.activation.key[0] === 'ctrlKey') {
             document.body.style.cursor = '-webkit-grab';
         }
@@ -331,8 +339,9 @@ var HandTool = function(win, doc, chrome, handToolId){
         // }
 
         // sln 2    
-        if (GlobalSetting.activation.mouse === '1' && 
-            GlobalSetting.activation.key[0] === 'ctrlKey') {
+        if (GlobalSetting.activation.mouse !== '0' && 
+            GlobalSetting.activation.key[0] === 'ctrlKey' && 
+            isActivatorKey(e.keyCode)) {
             document.body.style.webkitUserSelect = 'none'; 
             if (document.body.style.cursor.indexOf('-webkit-grab') !== 0)
                 document.body.style.cursor = '-webkit-grab';
@@ -358,8 +367,9 @@ var HandTool = function(win, doc, chrome, handToolId){
         //         bodyStyle.replace(styles.disableSelect, ''));
 
         // sln 2
-        if (GlobalSetting.activation.mouse === '1' && 
-            GlobalSetting.activation.key[0] === 'ctrlKey') {
+        if (GlobalSetting.activation.mouse !== '0' && 
+            GlobalSetting.activation.key[0] === 'ctrlKey' && 
+            isActivatorKey(e.keyCode)) {
             document.body.style.webkitUserSelect = '';
             injectionTargets.forEach(function(element) {
                 element.webkitUserSelect = '';
