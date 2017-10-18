@@ -42,13 +42,10 @@ function getLocalSetting() {
   else
     setting = JSON.parse(settingStr);
 
-  console.log(setting);
   return setting;
 }
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendRespond) {
-  // console.log(msg + ", type: " + typeof msg);
-
   //message handler forwarder
   if (msg.type == "mm.cs.requestSetting") {
     sendRespond(getLocalSetting());
@@ -57,18 +54,19 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendRespond) {
 
 var manifest = chrome.app.getDetails();
 
-var injectScript = function(tab) {
+var reloadContentScript = function(tab) {
   var scripts = manifest.content_scripts[0].js;
-  for (var i = 0; i < scripts.length; i++)
+  for (var i = 0; i < scripts.length; i++) {
     chrome.tabs.executeScript(tab.id, {
       file: scripts[i]
     });
+  }
 }
 
 var excludedPrefix = [
   'https://chrome.google.com/webstore',
   'chrome'
-]
+];
 
 chrome.windows.getAll({
   populate: true
@@ -76,8 +74,8 @@ chrome.windows.getAll({
   windows.forEach(function(w) {
     w.tabs.forEach(function(tab) {
       for (i = 0; i < excludedPrefix.length; i++)
-        if (tab.url.indexOf(excludedPrefix[i] === 0)) return;
-      injectScript(tab);
+        if (tab.url.indexOf(excludedPrefix[i]) === 0) return;
+      reloadContentScript(tab);
     });
   })
 });

@@ -33,6 +33,11 @@ var Midas = function(newSetting, win, doc) {
   }
 
   function scroll(target, scrollAmountX, scrollAmountY, e) {
+    if (target.type === 'application/x-google-chrome-pdf' || target.type === 'application/pdf') {
+      doc.documentElement.scrollBy(-scrollAmountX, -scrollAmountY);
+      return;
+    }
+
     var el;
     var left = [];
     var top = [];
@@ -44,59 +49,25 @@ var Midas = function(newSetting, win, doc) {
     while (el) {
       left.push(el.scrollLeft);
       top.push(el.scrollTop);
-      el = el.parentElement;
+      el = el.parentNode;
     }
 
     var elementScale;
 
-    if (target.type === 'application/pdf')
-      elementScale = 1;
-    else if (target.type === 'application/x-shockwave-flash')
-      elementScale = 120;
-    else
-      elementScale = 120;
-
-    var evt = new WheelEvent(
-      'wheel', {
-        bubbles: true,
-        deltaZ: 0,
-        view: win,
-        screenX: e.screenX,
-        screenY: e.screenY,
-        clientX: e.clientX,
-        clientY: e.clientY,
-        ctrlKey: false,
-        altKey: false,
-        shiftKey: false,
-        metaKey: false,
-        deltaX: -scrollAmountX * elementScale,
-        deltaY: -scrollAmountY * elementScale
-      });
-    target.dispatchEvent(evt);
-
-    //do a check, if nothing scrolled, bubble it up to body, manually
-    //body won't get scrolled by custom event
     el = target;
     var i = 0;
     while (el) {
-      if (Math.abs(el.scrollLeft - left[i]) > Math.abs(scrollAmountX))
-        el.scrollLeft = left[i] - scrollAmountX;
-
-      scrollAmountX -= (el.scrollLeft - left[i]);
-
-      if (Math.abs(el.scrollTop - top[i]) > Math.abs(scrollAmountY))
-        el.scrollTop = top[i] - scrollAmountY;
-
-      scrollAmountY -= (el.scrollTop - top[i]);
+      if (el.scrollBy) {
+        el.scrollBy(-scrollAmountX, -scrollAmountY);
+        scrollAmountY -= (top[i] - el.scrollTop);
+        scrollAmountX -= (left[i] - el.scrollLeft);
+      }
       i++;
-      el = el.parentElement;
+      el = el.parentNode;
     }
-
-    if ((scrollAmountX == prevScrollAmountX) && (target.type !== 'application/pdf'))
-      doc.body.scrollLeft -= scrollAmountX;
-
-    if ((scrollAmountY == prevScrollAmountY) && (target.type !== 'application/pdf'))
-      doc.body.scrollTop -= scrollAmountY;
+    el = window;
+    el.scrollBy(-scrollAmountX, 0);
+    el.scrollBy(0, -scrollAmountY);
   }
 
   function clearIntervals() {
@@ -106,16 +77,14 @@ var Midas = function(newSetting, win, doc) {
 
   //public interface
   this.reset = function() {
-    //receive a mousedown event
-    //initiate panning
+    // mouse down
     clearIntervals();
     state = 'stopped';
   };
 
   this.pan = function(current, prev) {
+    // mouse move
     try {
-      //receive a mousemove event
-      //perform panning
       var scrollAmountX = (current.x - prev.x) * setting.scale;
       var scrollAmountY = (current.y - prev.y) * setting.scale;
 
@@ -125,15 +94,16 @@ var Midas = function(newSetting, win, doc) {
 
       return (Math.abs(scrollAmountX) + Math.abs(scrollAmountY));
     } catch (exception) {
-      console.log(exception);
+      console.warn(exception);
     }
-
   };
 
   this.slide = function(current) {
+    // mouse up
     try {
-      if (setting.slide !== 'yes')
+      if (setting.slide !== 'yes') {
         return;
+      }
 
       state = 'sliding';
 
@@ -146,7 +116,7 @@ var Midas = function(newSetting, win, doc) {
       var prevTime = current.time;
 
       timerIds.push(setInterval(function() {
-        var currentTime = +new Date();
+        var currentTime = Date.now();
         var dt = currentTime - prevTime;
 
         var newVx = current.vx + (frictionX * dt);
@@ -176,7 +146,7 @@ var Midas = function(newSetting, win, doc) {
         prevTime = currentTime;
       }, RENDER_INTERVAL));
     } catch (exception) {
-
+      console.warn(exception);
     }
   };
 
@@ -240,19 +210,24 @@ var HandTool = function(win, doc, chrome, handToolId) {
   //STYLING FIELDS & FUNCS
   //change cursor
 
-
   //remove context menu
 
   //prevent context menu if panning amount > 3px
   var PREVENT_DEFAULT_THRESHOLD = 3;
+  // var lastMouseDown = null;
 
   //main handler - event forwarder
   function handleMouseDown(e) {
     //request a new scroll session
     amountScrolled = 0;
 
-    if (!isLastActivator(e))
+    // lastMouseDown = e.which;
+    // if (lastMouseDown != parseInt(GlobalSetting.activation.mouse)) {
+    //   return;
+    // }
+    if (!isLastActivator(e)) {
       return;
+    }
 
     if (GlobalSetting.activation.mouse !== '0' &&
       GlobalSetting.activation.key[0] === 'ctrlKey') {
@@ -270,31 +245,37 @@ var HandTool = function(win, doc, chrome, handToolId) {
   }
 
   function handleMouseMove(e) {
+    var now = Date.now();
     if (midas.getState() == 'stopped')
       prev = {
         x: e.clientX,
         y: e.clientY,
-        time: e.timeStamp,
+        time: now,
         vx: 0,
         vy: 0,
         target: e.target,
         e: e
       };
 
+    // if (lastMouseDown != parseInt(GlobalSetting.activation.mouse)) {
+    //   return;
+    // }
     if (!isLastActivator(e))
       return;
-
-    var t = e.timeStamp;
 
     current = {
       x: e.clientX,
       y: e.clientY,
-      time: t,
-      vx: (t > prev.time) ? ((e.clientX - prev.x) / (t - prev.time)) : 0,
-      vy: (t > prev.time) ? ((e.clientY - prev.y) / (t - prev.time)) : 0,
+      time: now,
       target: prev.target,
       e: e
     };
+    current.vx = (current.time > prev.time) ? 
+      (current.x - prev.x) / (current.time - prev.time) : 
+      0;
+    current.vy = (current.time > prev.time) ? 
+      (current.y - prev.y) / (current.time - prev.time) : 
+      0;
 
     amountScrolled += midas.pan(current, prev);
 
@@ -308,8 +289,9 @@ var HandTool = function(win, doc, chrome, handToolId) {
 
   function handleMouseUp(e) {
     // this is the first of the combination to be removed
-    if (!isLastActivator(e))
+    if (!isLastActivator(e)) {
       return;
+    }
 
     if (GlobalSetting.activation.mouse !== '0' &&
       GlobalSetting.activation.key[0] === 'ctrlKey') {
@@ -366,8 +348,9 @@ var HandTool = function(win, doc, chrome, handToolId) {
     // check if extension is deactivated
     if ((parseInt(GlobalSetting.activation.mouse) !== 0) &&
       (parseInt(e.which) !== parseInt(GlobalSetting.activation.mouse)) ||
-      (GlobalSetting.state === 'deactivated'))
+      (GlobalSetting.state === 'deactivated')) {
       return false;
+    }
 
     // check if activation keys are pressed
     for (var i = 0; i < GlobalSetting.activation.key.length; i++)
@@ -462,22 +445,22 @@ var HandTool = function(win, doc, chrome, handToolId) {
   function init() {
     //INIT Point
     //mouse and keyboard handlers
-    win.addEventListener('mousemove', handleMouseMove, true);
-    win.addEventListener('mousedown', handleMouseDown, true);
-    win.addEventListener('mouseup', handleMouseUp, true);
+    doc.body.addEventListener('mousemove', handleMouseMove, true);
+    doc.body.addEventListener('mousedown', handleMouseDown, true);
+    doc.body.addEventListener('mouseup', handleMouseUp, true);
 
-    win.addEventListener('keydown', handleKeyDown, true);
-    win.addEventListener('keyup', handleKeyUp, true);
+    doc.body.addEventListener('keydown', handleKeyDown, true);
+    doc.body.addEventListener('keyup', handleKeyUp, true);
 
     win.addEventListener('focus', handleFocus, true);
     win.addEventListener('blur', handleBlur, true);
-    win.oncontextmenu = handleContextMenu;
+    doc.body.oncontextmenu = handleContextMenu;
 
     //messengers
     win.addEventListener('message', handleMessage, true);
 
     //init midas
-    midas = new Midas(GlobalSetting, win, doc);
+    midas = new Midas(GlobalSetting.scroll, win, doc);
     //init variables
     tabState = 'blur';
     amountScrolled = 0;
@@ -505,10 +488,12 @@ var HandTool = function(win, doc, chrome, handToolId) {
 };
 
 // Init point
-var handToolId = +new Date();
+var handToolId = Date.now();
+// destroy existing instance
 window.postMessage({
   type: 'mm.cs.destroy',
   exclude: handToolId
 }, '*');
+// create new instance
 var handTool = new HandTool(window, document, chrome, handToolId);
 handTool.init();
