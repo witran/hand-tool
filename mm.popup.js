@@ -61,7 +61,6 @@ window.onload = function(){
         else
             setting = JSON.parse(settingStr);
         
-        // console.log(settingStr);
         return setting;
     }
     
