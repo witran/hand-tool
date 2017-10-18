@@ -214,17 +214,12 @@ var HandTool = function(win, doc, chrome, handToolId) {
 
   //prevent context menu if panning amount > 3px
   var PREVENT_DEFAULT_THRESHOLD = 3;
-  // var lastMouseDown = null;
 
   //main handler - event forwarder
   function handleMouseDown(e) {
     //request a new scroll session
     amountScrolled = 0;
 
-    // lastMouseDown = e.which;
-    // if (lastMouseDown != parseInt(GlobalSetting.activation.mouse)) {
-    //   return;
-    // }
     if (!isLastActivator(e)) {
       return;
     }
@@ -257,9 +252,6 @@ var HandTool = function(win, doc, chrome, handToolId) {
         e: e
       };
 
-    // if (lastMouseDown != parseInt(GlobalSetting.activation.mouse)) {
-    //   return;
-    // }
     if (!isLastActivator(e))
       return;
 
