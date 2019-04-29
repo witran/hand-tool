@@ -71,8 +71,9 @@ var Midas = function(newSetting, win, doc) {
   }
 
   function clearIntervals() {
-    while (timerIds.length)
+    while (timerIds.length) {
       win.clearInterval(timerIds.pop());
+    }
   }
 
   //public interface
@@ -203,26 +204,29 @@ var HandTool = function(win, doc, chrome, instanceId) {
   //MOUSE DATA
   var current, prev;
 
-  //SCROLLING ENGINE FIELDS & FUNCS
+  //SCROLLING ENGINE
   var midas;
   var amountScrolled;
 
-  //STYLING FIELDS & FUNCS
-  //change cursor
-
-  //remove context menu
-
+  //STYLING
   //prevent context menu if panning amount > 3px
   var PREVENT_DEFAULT_THRESHOLD = 3;
+
+  //handle chrome mousemove fired on click
+  var shouldHandleMouseMove = false;
 
   //main handler - event forwarder
   function handleMouseDown(e) {
     //request a new scroll session
     amountScrolled = 0;
 
+    console.log('mouse down isLastActivator=', isLastActivator(e));
+
     if (!isLastActivator(e)) {
       return;
     }
+
+    shouldHandleMouseMove = true;
 
     if (GlobalSetting.activation.mouse !== '0' &&
       GlobalSetting.activation.key[0] === 'ctrlKey') {
@@ -241,8 +245,13 @@ var HandTool = function(win, doc, chrome, instanceId) {
   }
 
   function handleMouseMove(e) {
+    if (!shouldHandleMouseMove) return;
+
     var now = Date.now();
-    if (midas.getState() == 'stopped')
+
+    console.log('on move, state =', midas.getState());
+
+    if (midas.getState() == 'stopped') {
       prev = {
         x: e.clientX,
         y: e.clientY,
@@ -251,7 +260,8 @@ var HandTool = function(win, doc, chrome, instanceId) {
         vy: 0,
         target: e.target,
         e: e
-      };
+      }; 
+    }
 
     if (!isLastActivator(e)) {
       return;
@@ -264,6 +274,7 @@ var HandTool = function(win, doc, chrome, instanceId) {
       target: prev.target,
       e: e
     };
+
     current.vx = (current.time > prev.time) ? 
       (current.x - prev.x) / (current.time - prev.time) : 
       0;
@@ -286,6 +297,8 @@ var HandTool = function(win, doc, chrome, instanceId) {
     if (!isLastActivator(e)) {
       return;
     }
+
+    shouldHandleMouseMove = false;
 
     if (GlobalSetting.activation.mouse !== '0' &&
       GlobalSetting.activation.key[0] === 'ctrlKey') {
@@ -314,10 +327,9 @@ var HandTool = function(win, doc, chrome, instanceId) {
         document.body.style.cursor = '-webkit-grab';
     }
 
-    // request a new scroll session
-    if (midas.getState() === 'panning' || !isLastActivator(e))
-      return;
+    if (!isLastActivator(e)) return;
 
+    shouldHandleMouseMove = true;
     midas.reset();
   }
 
@@ -333,10 +345,11 @@ var HandTool = function(win, doc, chrome, instanceId) {
       document.body.style.cursor = '';
     }
 
-    // this is the first of the combination to be removed
+    // this is the first of the combination to be removed, or state is already panning
     if (!isActivatorKey(e.keyCode) || (midas.getState() !== 'panning'))
       return;
 
+    shouldHandleMouseMove = false;
     midas.slide(current);
   }
 
