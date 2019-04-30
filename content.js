@@ -220,8 +220,6 @@ var HandTool = function(win, doc, chrome, instanceId) {
     //request a new scroll session
     amountScrolled = 0;
 
-    console.log('mouse down isLastActivator=', isLastActivator(e));
-
     if (!isLastActivator(e)) {
       return;
     }
@@ -248,8 +246,6 @@ var HandTool = function(win, doc, chrome, instanceId) {
     if (!shouldHandleMouseMove) return;
 
     var now = Date.now();
-
-    console.log('on move, state =', midas.getState());
 
     if (midas.getState() == 'stopped') {
       prev = {

@@ -25,16 +25,16 @@
         }
     },
     "background": {
-        "scripts": ["mm.bg.js"]
+        "scripts": ["background.js"]
     },
     "options_page": "option.html",
     
     "content_scripts": [{
-        "js": ["mm.content.scroll.js"],
+        "js": ["content.js"],
         "matches": ["<all_urls>"]
     }],
 
     "web_accessible_resources": [
-       "mm.inpage.js", "jquery.min.js", "openhand.cur", "closedhand.cur"
+       "jquery.js", "openhand.cur", "closedhand.cur"
      ]
 }
