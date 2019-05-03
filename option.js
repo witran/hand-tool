@@ -80,7 +80,7 @@ if (OSName === 'Windows')(function() {
       var activation = '';
       if (setting.activation.key.length) {
         if (setting.activation.key[0] == 'ctrlKey')
-          activation = (OSName === 'MacOS') ? 'Command' : 'Control';
+          activation = 'Control';
         if (setting.activation.mouse == '1')
           activation += ' + Left Mouse';
         else
@@ -161,11 +161,6 @@ if (OSName === 'Windows')(function() {
 
     speedInp.val(setting.scroll.scale);
     speedInp.css('width', speedInp.val().width('18px Segoe UI bold'));
-
-    //    if (parseFloat(speedInp.val()) > 1)
-    //        $('#speed-responsive').text('pixels');
-    //    else
-    //        $('#speed-responsive').text('pixel');
 
     if (setting.activation.key.length == 1)
       setLight(actCtrl);
@@ -475,7 +470,7 @@ else(function() {
       var activation = '';
       if (setting.activation.key.length) {
         if (setting.activation.key[0] == 'ctrlKey')
-          activation = (OSName === 'MacOS') ? 'Command' : 'Control';
+          activation = 'Control';
         if (setting.activation.mouse == '1')
           activation += ' + Left Mouse';
         else
@@ -551,11 +546,6 @@ else(function() {
     speedInp.val(setting.scroll.scale);
     speedInp.css('width', speedInp.val().width('18px Segoe UI bold'));
 
-    //    if (parseFloat(speedInp.val()) > 1)
-    //        $('#speed-responsive').text('pixels');
-    //    else
-    //        $('#speed-responsive').text('pixel');
-
     if (setting.activation.key.length === 1) {
       setLight(actCtrl);
     }
@@ -620,8 +610,6 @@ else(function() {
     actM3 = $('#act-M3');
 
   actM3.css('visibility', 'hidden');
-  if (OSName === 'MacOS')
-    actCtrl.text('Command');
   $('.act-slash').last().css('visibility', 'hidden');
 
   //set handlers
