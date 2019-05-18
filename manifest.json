@@ -3,11 +3,10 @@
     "name": "Hand Tool",
     "description": "Use your Mouse or Stylus to smoothly pan web pages, bringing Photoshop Hand Tool to the web!",
     "version": "1.5.0",
-    "permissions": [ 
-        "tabs", 
-        "http://*/*", 
-        "https://*/*",
-        "storage"
+    "permissions": [
+        "activeTab",
+        "storage",
+        "tab"
     ],
     "icons": {"128": "hand-pointer.png"},
 
@@ -15,7 +14,7 @@
         "default_icon": "hand-pointer.png",
         "default_popup": "popup.html"
     },
-    
+
     "commands":{
         "_execute_browser_action": {
             "suggested_key": {
@@ -28,7 +27,7 @@
         "scripts": ["background.js"]
     },
     "options_page": "option.html",
-    
+
     "content_scripts": [{
         "js": ["content.js"],
         "matches": ["<all_urls>"]

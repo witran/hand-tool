@@ -1,40 +1,31 @@
-//browser starts
-//invoke local storage for settings
+// background script is invoked on browser starts
+//
 
-//this background holds all extension's runtime data
-//remember in-page js files don't have access to extension's runtime data
-//while popup needs to be init & disposed multiple times -> unstable
-//background page is where our app runs
-
-if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
-if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
-if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
-if (navigator.appVersion.indexOf("Linux") != -1) OSName = "Linux";
+if (navigator.appVersion.indexOf('Win') != -1) OSName = 'Windows';
+if (navigator.appVersion.indexOf('Mac') != -1) OSName = 'MacOS';
+if (navigator.appVersion.indexOf('X11') != -1) OSName = 'UNIX';
+if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
 
 var defaultSetting = {
-  state: "activated",
+  state: 'activated',
   style: {
-    showHand: "true"
+    showHand: 'true'
   },
 
   scroll: {
-    reverse: "yes",
-    slide: "yes",
-    scale: "1.5"
+    reverse: 'yes',
+    slide: 'yes',
+    scale: '1.5'
   },
 
   activation: {
-    mouse: (OSName == "Linux" || OSName == "MacOS") ? "2" : "3",
+    mouse: (OSName == 'Linux' || OSName == 'MacOS') ? '2' : '3',
     key: []
   }
 };
 
 function getLocalSetting() {
-  //get setting from local Storage
-  //return as object
-  //if local storage empty, return default
-  var settingStr = localStorage["setting"];
-
+  var settingStr = localStorage['setting'];
   var setting;
 
   if (!settingStr)
@@ -46,8 +37,7 @@ function getLocalSetting() {
 }
 
 chrome.runtime.onMessage.addListener(function(msg, sender, sendRespond) {
-  //message handler forwarder
-  if (msg.type == "mm.cs.requestSetting") {
+  if (msg.type == 'handtool.content.requestSetting') {
     sendRespond(getLocalSetting());
   }
 });
@@ -63,7 +53,7 @@ var reloadContentScript = function(tab) {
   }
 }
 
-var excludedPrefix = [
+var excludedPrefixes = [
   'https://chrome.google.com/webstore',
   'chrome'
 ];
@@ -71,10 +61,10 @@ var excludedPrefix = [
 chrome.windows.getAll({
   populate: true
 }, function(windows) {
-  windows.forEach(function(w) {
-    w.tabs.forEach(function(tab) {
-      for (i = 0; i < excludedPrefix.length; i++)
-        if (tab.url.indexOf(excludedPrefix[i]) === 0) return;
+  windows.forEach(function(window) {
+    window.tabs.forEach(function(tab) {
+      for (i = 0; i < excludedPrefixes.length; i++)
+        if (tab.url.indexOf(excludedPrefixes[i]) === 0) return;
       reloadContentScript(tab);
     });
   })

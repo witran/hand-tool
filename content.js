@@ -34,7 +34,7 @@ var Midas = function(newSetting, win, doc) {
 
   function scroll(target, scrollAmountX, scrollAmountY, e) {
     if (target.type === 'application/x-google-chrome-pdf' || target.type === 'application/pdf') {
-      doc.documentElement.scrollBy(-scrollAmountX, -scrollAmountY);
+      document.documentElement.scrollBy(-scrollAmountX, -scrollAmountY);
       return;
     }
 
@@ -72,7 +72,7 @@ var Midas = function(newSetting, win, doc) {
 
   function clearIntervals() {
     while (timerIds.length) {
-      win.clearInterval(timerIds.pop());
+      window.clearInterval(timerIds.pop());
     }
   }
 
@@ -197,8 +197,8 @@ var HandTool = function(win, doc, chrome, instanceId) {
 
   //messenger api
   var allowedMsgType = [
-    'mm.cs.destroy',
-    'mm.popup.notify'
+    'handtool.content.destroy',
+    'handtool.popup.notify'
   ];
 
   //MOUSE DATA
@@ -256,7 +256,7 @@ var HandTool = function(win, doc, chrome, instanceId) {
         vy: 0,
         target: e.target,
         e: e
-      }; 
+      };
     }
 
     if (!isLastActivator(e)) {
@@ -271,11 +271,11 @@ var HandTool = function(win, doc, chrome, instanceId) {
       e: e
     };
 
-    current.vx = (current.time > prev.time) ? 
-      (current.x - prev.x) / (current.time - prev.time) : 
+    current.vx = (current.time > prev.time) ?
+      (current.x - prev.x) / (current.time - prev.time) :
       0;
-    current.vy = (current.time > prev.time) ? 
-      (current.y - prev.y) / (current.time - prev.time) : 
+    current.vy = (current.time > prev.time) ?
+      (current.y - prev.y) / (current.time - prev.time) :
       0;
 
     amountScrolled += midas.pan(current, prev);
@@ -419,14 +419,14 @@ var HandTool = function(win, doc, chrome, instanceId) {
 
   function requestUpdate() {
     chrome.runtime.sendMessage({
-      type: 'mm.cs.requestSetting'
+      type: 'handtool.content.requestSetting'
     }, function(response) {
       updateGlobalSetting(response);
     });
   }
 
   function messageAllowed(msg) {
-    if (msg.source !== win)
+    if (msg.source !== window)
       return false;
 
     for (var i = 0; i < allowedMsgType.length; i++)
@@ -441,30 +441,29 @@ var HandTool = function(win, doc, chrome, instanceId) {
       return;
     }
 
-    if (msg.data.type === 'mm.popup.notify') {
+    if (msg.data.type === 'handtool.popup.notify') {
       updateGlobalSetting(msg.data.setting);
-    } else if (msg.data.type === 'mm.cs.destroy' && 
+    } else if (msg.data.type === 'handtool.content.destroy' &&
       msg.data.exclude != instanceId) {
       destroy();
     }
   }
 
   function init() {
-    //INIT Point
     //mouse and keyboard handlers
-    win.addEventListener('mousemove', handleMouseMove, true);
-    win.addEventListener('mousedown', handleMouseDown, true);
-    win.addEventListener('mouseup', handleMouseUp, true);
+    window.addEventListener('mousemove', handleMouseMove, true);
+    window.addEventListener('mousedown', handleMouseDown, true);
+    window.addEventListener('mouseup', handleMouseUp, true);
 
-    win.addEventListener('keydown', handleKeyDown, true);
-    win.addEventListener('keyup', handleKeyUp, true);
+    window.addEventListener('keydown', handleKeyDown, true);
+    window.addEventListener('keyup', handleKeyUp, true);
 
-    win.addEventListener('focus', handleFocus, true);
-    win.addEventListener('blur', handleBlur, true);
-    doc.body.addEventListener('contextmenu', handleContextMenu, true);
+    window.addEventListener('focus', handleFocus, true);
+    window.addEventListener('blur', handleBlur, true);
+    document.body.addEventListener('contextmenu', handleContextMenu, true);
 
     //messengers
-    win.addEventListener('message', handleMessage, true);
+    window.addEventListener('message', handleMessage, true);
 
     //init midas
     midas = new Midas(GlobalSetting.scroll, win, doc);
@@ -477,19 +476,19 @@ var HandTool = function(win, doc, chrome, instanceId) {
   }
 
   function destroy() {
-    win.removeEventListener('mousemove', handleMouseMove, true);
-    win.removeEventListener('mousedown', handleMouseDown, true);
-    win.removeEventListener('mouseup', handleMouseUp, true);
+    window.removeEventListener('mousemove', handleMouseMove, true);
+    window.removeEventListener('mousedown', handleMouseDown, true);
+    window.removeEventListener('mouseup', handleMouseUp, true);
 
-    win.removeEventListener('keydown', handleKeyDown, true);
-    win.removeEventListener('keyup', handleKeyUp, true);
+    window.removeEventListener('keydown', handleKeyDown, true);
+    window.removeEventListener('keyup', handleKeyUp, true);
 
-    win.removeEventListener('focus', handleFocus, true);
-    win.removeEventListener('blur', handleBlur, true);
+    window.removeEventListener('focus', handleFocus, true);
+    window.removeEventListener('blur', handleBlur, true);
 
-    win.removeEventListener('message', handleMessage, true);
+    window.removeEventListener('message', handleMessage, true);
 
-    doc.body.removeEventListener('contextmenu', handleContextMenu, true);
+    document.body.removeEventListener('contextmenu', handleContextMenu, true);
   }
 
   this.requestUpdate = requestUpdate;
@@ -500,7 +499,7 @@ var HandTool = function(win, doc, chrome, instanceId) {
 var instanceId = Date.now();
 // destroy existing instance
 window.postMessage({
-  type: 'mm.cs.destroy',
+  type: 'handtool.content.destroy',
   exclude: instanceId
 }, '*');
 // create new instance
