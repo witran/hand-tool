@@ -160,7 +160,7 @@ var Engine = function(newSetting, win, doc) {
   };
 };
 
-var HandTool = function(win, doc, chrome, version) {
+var HandTool = function(win, doc, chrome, instanceId) {
 
   //GLOBAL SETTINGS
   //app get only
@@ -444,7 +444,7 @@ var HandTool = function(win, doc, chrome, version) {
     if (msg.data.type === 'handtool.popup.notify') {
       updateGlobalSetting(msg.data.setting);
     } else if (msg.data.type === 'handtool.content.destroy' &&
-      msg.data.exclude != version) {
+      msg.data.exclude != instanceId) {
       destroy();
     }
   }
@@ -495,9 +495,21 @@ var HandTool = function(win, doc, chrome, version) {
   this.init = init;
 };
 
-// init
-var instanceId = Date.now();
+// init once on focus
+function start() {
+  var instanceId = Date.now();
 
-// create new instance
-var handTool = new HandTool(window, document, chrome, instanceId);
-handTool.init();
+  // destroy old versions
+  window.postMessage({
+    type: 'handtool.content.destroy',
+    exclude: instanceId
+  }, '*');
+
+  // create new instance
+  var handTool = new HandTool(window, document, chrome, instanceId);
+  handTool.init();
+
+  window.removeEventListener('focus', start);
+}
+
+window.addEventListener('focus', start);

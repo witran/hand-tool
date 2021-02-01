@@ -6,6 +6,11 @@ if (navigator.appVersion.indexOf('Mac') != -1) OSName = 'MacOS';
 if (navigator.appVersion.indexOf('X11') != -1) OSName = 'UNIX';
 if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
 
+var EXCLUDED_PREFIXES = [
+  'https://chrome.google.com/webstore',
+  'chrome'
+];
+
 var defaultSetting = {
   state: 'activated',
   style: {
@@ -16,13 +21,16 @@ var defaultSetting = {
     reverse: 'yes',
     slide: 'yes',
     scale: '1.5'
-  },
-
-  activation: {
-    mouse: (OSName == 'Linux' || OSName == 'MacOS') ? '2' : '3',
-    key: []
   }
 };
+
+if (OSName === 'Windows') {
+  defaultSetting.activation = { mouse: '3', key: [] };
+} else if (OSName === 'MacOS') {
+  defaultSetting.activation = { mouse: '', key: ['ctrlKey'] };
+} else if (OSName === 'Linux' || OSName === 'UNIX') {
+  defaultSetting.activation = { mouse: '2', key: [] };
+}
 
 function getLocalSetting() {
   var settingStr = localStorage['setting'];
@@ -44,27 +52,19 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendRespond) {
 
 var manifest = chrome.app.getDetails();
 
-var reloadContentScript = function(tab) {
-  var scripts = manifest.content_scripts[0].js;
-  for (var i = 0; i < scripts.length; i++) {
-    chrome.tabs.executeScript(tab.id, {
-      file: scripts[i]
-    });
-  }
+function reloadContentScript(tab) {
+  chrome.tabs.executeScript(tab.id, {
+    file: "inject.js"
+  });
 }
-
-var excludedPrefixes = [
-  'https://chrome.google.com/webstore',
-  'chrome'
-];
 
 chrome.windows.getAll({
   populate: true
 }, function(windows) {
   windows.forEach(function(window) {
     window.tabs.forEach(function(tab) {
-      for (i = 0; i < excludedPrefixes.length; i++)
-        if (tab.url.indexOf(excludedPrefixes[i]) === 0) return;
+      for (i = 0; i < EXCLUDED_PREFIXES.length; i++)
+        if (tab.url && tab.url.indexOf(EXCLUDED_PREFIXES[i]) === 0) return;
       reloadContentScript(tab);
     });
   })
