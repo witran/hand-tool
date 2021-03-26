@@ -1,101 +1,113 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Hand Tool Options</title>
-        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
-        <link href='bootstrap.css' rel='stylesheet'/>
-        <link href='option.css' rel='stylesheet'/>
-    </head>
-    <body>
-        <div id='body-wrapper'>
-            <div id='super-head'><h1>HAND TOOL OPTIONS</h1></div>
 
-            <div><h2 class='option-head'>Settings</h2></div>
-            <div class='opt-cnt'>
-                <ul class='ul-1'>
-                    <li class='li-1'>
-                        <h4 class='inline-switch-block'>Hand Tool is </h4>
-                        <h4 class='inline-switch-block light' id='app-sw1'>ON </h4>
-                        <h4 class='inline-switch-block dark' id='app-sw2' title='turn it off'>OFF </h4>
-                        <br/>
-                        <h4 class='inline-switch-block'>Scrolling Speed is </h4>
-                        <input class='inline-switch-block' id='speed-input' type='text' value='1.5' title='click to change'/>
-                        <h4 class='inline-switch-block grey sign-click' id='plus'>+</h4>
-                        <h4 class='inline-switch-block grey sign-click' id='minus'>−</h4>
-                        <h4 class='inline-switch-block' id='speed-responsive' style='visibility: hidden'> pixel </h4>
-                        <!--<h4 class='inline-switch-block'> when your mouse moves 1 pixel</h4>-->
-                        <br/>
-                        <h4 class='inline-switch-block' id='act-mac'>Activated by Control Key</h4>
-                        <h4 class='inline-switch-block' id='act-non-mac'>Activated by </h4> <br id='act-brk'/>
-                        <h4 class='inline-switch-block dark' id='act-ctrl'>Control</h4>
-                        <h4 class='inline-switch-block dark' id='act-responsive-sign'>+</h4>
-                        <h4 class='inline-switch-block dark' id='act-M1'>Left Mouse</h4>
-                        <h4 class='inline-switch-block dark sign act-slash'>/</h4>
-                        <h4 class='inline-switch-block dark' id='act-M2'>Middle Mouse</h4>
-                        <h4 class='inline-switch-block dark sign act-slash'>/</h4>
-                        <h4 class='inline-switch-block light' id='act-M3'>Right Mouse</h4>
-                        <div class='foot-note' id='act-foot'>* <i>Left Mouse can not be used alone, it will cause problem with text selection.</i></div>
-                    </li>
-                    <li class='li-1' id='suggestion'>
-                        <h4>Suggestions, click below according to your device:</h4>
-                        <h4 class='inline-switch-block grey pref' id='pref-1' title='for Mouse users'>Mouse</h4>
-                        <h4 class='inline-switch-block dark sign' >/</h4>
-                        <h4 class='inline-switch-block grey pref' id='pref-2' title='for Laptop users'>Touchpad</h4>
-                        <h4 class='inline-switch-block dark sign' >/</h4>
-                        <h4 class='inline-switch-block grey pref' id='pref-3' title='for Stylus users'>Stylus</h4>
-                        <h4 class='inline-switch-block dark sign' >/</h4>
-                        <h4 class='inline-switch-block grey pref' id='pref-4' title='for Tablet users'>Tablet</h4>
-                    </li>
-                </ul>
-            </div>
+<head>
+    <title>Hand Tool Options</title>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+    <link href='bootstrap.css' rel='stylesheet' />
+    <link href='option.css' rel='stylesheet' />
+</head>
 
-            <div><h2 class='option-head'>Tips and Tricks</h2></div>
-            <div class='opt-cnt'>
-                <ul class='ul-1'>
-                    <li class='li-1'>
-                        Turn <span class='hl'>Hand Tool</span> on or off
-                        by Left Clicking the <img id='hand-tool-img' src='hand-pointer.png' title='Hand'/> icon.
-                    </li>
-                    <li class='li-1'>
-                        For Stylus users, use the <span class='hl'>Control Key</span> as activator and try:
-                        <ul class='ul-2'>
-                            <li class='li-2'>
-                                Slide a finger up and down on touchpad. <br/>
-                            </li>
-                            <li class='li-2'>
-                                Hold and Release the Control Key with the other hand. <br/>
-                                Think of the Control Key as a scroll toggle, toggle it when your finger is sliding in the right direction.
-                            </li>
-                        </ul>
-                    </li>
-                    <li class='li-1 tip tip-windows'>
-                        Panning using Right Mouse Button can be helpful and addictive.
-                    </li>
-                    <li class='li-1 tip tip-linux'>
-                        By default, Linux users can activate panning by Middle Mouse.
-                    </li>
-                    <li class='li-1 tip tip-linux tip-window'>
-                        Middle Mouse activation is useful if you have a broken Mouse Wheel that is unable to scroll, but is able to click
-                    </li>
-                    <li class='li-1'>
-                        "Scrolling Speed is 1.5" means when your mouse moves 1 pixel, your screen scrolls 1.5 pixels. You can change the speed by clicking the Number Input, or the +, - signs at the Settings Panel.
-                    </li>
-                </ul>
-            </div>
-
-            <div><h2 class='option-head'>About</h2></div>
-            <div class='opt-cnt'>
-                <ul class='ul-1'>
-                    <li class='li-1'>
-                        <span class='hl'>Hand Tool</span> makes scrolling any webpage similar to scrolling a touch screen or using any pdf reader's hand tool.
-                        This extension gives you a helpful alternative to scroll a webpage, more natural, convenient and stylus-friendly. 
-                </ul>
-            </div>
+<body>
+    <div id='body-wrapper'>
+        <div id='super-head'>
+            <h1>HAND TOOL OPTIONS</h1>
         </div>
 
+        <div>
+            <h2 class='option-head'>Settings</h2>
+        </div>
+        <div class='opt-cnt'>
+            <ul class='ul-1'>
+                <li class='li-1'>
+                    <h4 class='inline-switch-block'>Hand Tool is </h4>
+                    <h4 class='inline-switch-block light' id='app-sw1'>ON </h4>
+                    <h4 class='inline-switch-block dark' id='app-sw2' title='turn it off'>OFF </h4>
+                    <br />
+                    <h4 class='inline-switch-block'>Scrolling Speed is </h4>
+                    <input class='inline-switch-block' id='speed-input' type='text' value='1.5'
+                        title='click to change' />
+                    <h4 class='inline-switch-block grey sign-click' id='plus'>+</h4>
+                    <h4 class='inline-switch-block grey sign-click' id='minus'>−</h4>
+                    <h4 class='inline-switch-block' id='speed-responsive' style='visibility: hidden'> pixel </h4>
+                    <!--<h4 class='inline-switch-block'> when your mouse moves 1 pixel</h4>-->
+                    <br />
+                    <h4 class='inline-switch-block' id='act-mac'>Activated by Control Key</h4>
+                    <h4 class='inline-switch-block' id='act-non-mac'>Activated by </h4> <br id='act-brk' />
+                    <h4 class='inline-switch-block dark' id='act-ctrl'>Control</h4>
+                    <h4 class='inline-switch-block dark' id='act-responsive-sign'>+</h4>
+                    <h4 class='inline-switch-block dark' id='act-M1'>Left Mouse</h4>
+                    <h4 class='inline-switch-block dark sign act-slash'>/</h4>
+                    <h4 class='inline-switch-block dark' id='act-M2'>Middle Mouse</h4>
+                    <h4 class='inline-switch-block dark sign act-slash'>/</h4>
+                    <h4 class='inline-switch-block light' id='act-M3'>Right Mouse</h4>
+                    <div class='foot-note' id='act-foot'>* <i>Left Mouse can not be used alone, it will cause problem
+                            with text selection.</i></div>
+                </li>
+                <li class='li-1' id='suggestion'>
+                    <h4>Suggestions, click below according to your device:</h4>
+                    <h4 class='inline-switch-block grey pref' id='pref-1' title='for Mouse users'>Mouse</h4>
+                    <h4 class='inline-switch-block dark sign'>/</h4>
+                    <h4 class='inline-switch-block grey pref' id='pref-2' title='for Laptop users'>Touchpad</h4>
+                    <h4 class='inline-switch-block dark sign'>/</h4>
+                    <h4 class='inline-switch-block grey pref' id='pref-3' title='for Stylus users'>Stylus</h4>
+                    <h4 class='inline-switch-block dark sign'>/</h4>
+                    <h4 class='inline-switch-block grey pref' id='pref-4' title='for Tablet users'>Tablet</h4>
+                </li>
+            </ul>
+        </div>
 
-        <script src='jquery.js'></script>
-        <script src='content.js'></script>
-        <script src='option.js'></script>
-    </body>
+        <div>
+            <h2 class='option-head'>Tips and Tricks</h2>
+        </div>
+        <div class='opt-cnt'>
+            <ul class='ul-1'>
+                <li class='li-1'>
+                    Turn <span class='hl'>Hand Tool</span> on or off
+                    by Left Clicking the <img id='hand-tool-img' src='hand-pointer.png' title='Hand' /> icon.
+                </li>
+                <li class='li-1 tip tip-mac tip-linux'>
+                    For Stylus users, use the <span class='hl'>Control Key</span> activator.
+                </li>
+                <li class='li-1 tip tip-windows'>
+                    For Stylus users, use <span class='hl'>Right Mouse</span> or <span class='hl'>Control Key</span>
+                    activator.
+                </li>
+                <li class='li-1 tip tip-windows'>
+                    Panning using Right Mouse Button can be helpful and addictive.
+                </li>
+                <li class='li-1 tip tip-linux'>
+                    By default, Linux users can activate panning by Middle Mouse.
+                </li>
+                <li class='li-1 tip tip-linux tip-window'>
+                    Middle Mouse activation is useful if you have a broken Mouse Wheel that is unable to scroll, but is
+                    able to click
+                </li>
+                <li class='li-1'>
+                    "Scrolling Speed is 1.5" means when your mouse moves 1 pixel, your screen scrolls 1.5 pixels. You
+                    can change the speed by clicking the Number Input, or the +, - signs at the Settings Panel.
+                </li>
+            </ul>
+        </div>
+
+        <div>
+            <h2 class='option-head'>About</h2>
+        </div>
+        <div class='opt-cnt'>
+            <ul class='ul-1'>
+                <li class='li-1'>
+                    <span class='hl'>Hand Tool</span> makes scrolling any webpage similar to scrolling a touch screen or
+                    using any pdf reader's hand tool.
+                    This extension gives you a helpful alternative to scroll a webpage, more natural, convenient and
+                    stylus-friendly.
+            </ul>
+        </div>
+    </div>
+
+
+    <script src='jquery.js'></script>
+    <script src='content.js'></script>
+    <script src='option.js'></script>
+</body>
+
 </html>

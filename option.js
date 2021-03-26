@@ -7,19 +7,19 @@ if (navigator.appVersion.indexOf('Mac') != -1) OSName = 'MacOS';
 if (navigator.appVersion.indexOf('X11') != -1) OSName = 'UNIX';
 if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
 
-(function() {
+(function () {
 
-  String.prototype.width = function(font) {
+  String.prototype.width = function (font) {
     var f = font || '12px arial',
       o = $('<div>' + this + '</div>')
-      .css({
-        'position': 'absolute',
-        'float': 'left',
-        'white-space': 'nowrap',
-        'visibility': 'hidden',
-        'font': f
-      })
-      .appendTo($('body')),
+        .css({
+          'position': 'absolute',
+          'float': 'left',
+          'white-space': 'nowrap',
+          'visibility': 'hidden',
+          'font': f
+        })
+        .appendTo($('body')),
       w = o.width() + 3;
 
     o.remove();
@@ -54,17 +54,17 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
         if (setting.activation.mouse == '1')
           activation += ' + Left Mouse';
         else
-        if (setting.activation.mouse == '2')
-          activation += ' + Middle Mouse';
-        else
-        if (setting.activation.mouse == '3')
-          activation += ' + Right Mouse';
+          if (setting.activation.mouse == '2')
+            activation += ' + Middle Mouse';
+          else
+            if (setting.activation.mouse == '3')
+              activation += ' + Right Mouse';
       } else {
         if (setting.activation.mouse == '2')
           activation = 'Middle Mouse';
         else
-        if (setting.activation.mouse == '3')
-          activation = 'Right Mouse';
+          if (setting.activation.mouse == '3')
+            activation = 'Right Mouse';
       }
       chrome.browserAction.setTitle({
         title: 'Hand tool activated (' + activation + ')'
@@ -195,7 +195,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
 
   //set handlers
   //app ON OFF SETTINGS
-  appOn.click(function() {
+  appOn.click(function () {
     if (isDeactivated($(this))) {
       setLight(appOn);
       setDark(appOff);
@@ -207,7 +207,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     }
   });
 
-  appOff.click(function() {
+  appOff.click(function () {
     if (isDeactivated($(this))) {
       setLight(appOff);
       setDark(appOn);
@@ -220,7 +220,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
   });
 
   //SPEED SETTINGS
-  speedInp.keyup(function(e) {
+  speedInp.keyup(function (e) {
     //change input width
     if (!$(this).val().length || isNaN($(this).val()))
       $(this).val('1.5');
@@ -230,8 +230,8 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
 
     $(this).css('width',
       $(this).val().length ?
-      ($(this).val().width('18px Segoe UI bold') + 'px') :
-      ('1.5'.width('18px Segoe UI bold') + 'px'));
+        ($(this).val().width('18px Segoe UI bold') + 'px') :
+        ('1.5'.width('18px Segoe UI bold') + 'px'));
 
     //put new setting
     setting.scroll.scale = $(this).val();
@@ -244,7 +244,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
       $('#speed-responsive').text('pixel');
   });
 
-  spdPlus.click(function() {
+  spdPlus.click(function () {
     var val = parseFloat(speedInp.val());
     val = (val + 0.1).toFixed(1);
 
@@ -255,7 +255,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     putSetting(setting);
   });
 
-  spdMinus.click(function() {
+  spdMinus.click(function () {
     var val = parseFloat(speedInp.val());
     val = (val - 0.1).toFixed(1);
     if (val <= 0.1)
@@ -268,7 +268,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
   });
 
   //ACTIVATION SETTINGS
-  actCtrl.click(function() {
+  actCtrl.click(function () {
     if (isDeactivated(actCtrl)) {
       setting.activation.key = ['ctrlKey'];
     } else {
@@ -279,7 +279,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     updateUI();
   });
 
-  actM1.click(function() {
+  actM1.click(function () {
     if (isDeactivated(actM1)) {
       setting.activation.mouse = '1';
       setting.activation.key = ['ctrlKey'];
@@ -291,7 +291,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     updateUI();
   });
 
-  actM2.click(function() {
+  actM2.click(function () {
     if (isDeactivated(actM2)) {
       //click to dark is toggle
       setting.activation.mouse = '2';
@@ -304,7 +304,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     updateUI();
   });
 
-  actM3.click(function() {
+  actM3.click(function () {
     if (isDeactivated(actM3)) {
       //click to dark is toggle
       setting.activation.mouse = '3';
@@ -318,7 +318,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
   });
 
   //PREFERENCES SETTINGS
-  $('#pref-1').click(function() {
+  $('#pref-1').click(function () {
     setting.state = 'activated';
     setting.scroll.scale = '1.5';
     setting.activation.mouse = '3';
@@ -328,7 +328,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     updateUI();
   });
 
-  $('#pref-2').click(function() {
+  $('#pref-2').click(function () {
     setting.state = 'activated';
     setting.scroll.scale = '1.5';
     setting.activation.mouse = '0';
@@ -338,7 +338,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     updateUI();
   });
 
-  $('#pref-3').click(function() {
+  $('#pref-3').click(function () {
     setting.state = 'activated';
     setting.scroll.scale = '3';
     setting.activation.mouse = '3';
@@ -348,7 +348,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     updateUI();
   });
 
-  $('#pref-4').click(function() {
+  $('#pref-4').click(function () {
     setting.state = 'deactivated';
 
     putSetting(setting);
@@ -392,8 +392,12 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     $('#act-mac').css('display', 'block');
     $('.tip').css('display', 'none');
     $('.tip-mac').css('display', 'block');
+  } else if (OSName === 'Windows') {
+    $('.tip').css('display', 'none');
+    $('.tip-windows').css('display', 'block');
   } else if (OSName === 'UNIX' || OSName === 'Linux') {
-
+    $('.tip').css('display', 'none');
+    $('.tip-linux').css('display', 'block');
   }
 
   // init
