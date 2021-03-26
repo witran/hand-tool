@@ -1,5 +1,4 @@
-'use strict';
-
+(function() {
 var Engine = function(newSetting, win, doc) {
 
   //private fields
@@ -513,3 +512,4 @@ function start() {
 }
 
 window.addEventListener('focus', start);
+})();
