@@ -2,6 +2,10 @@ a {
   cursor: pointer;
 }
 
+body {
+  background: #181818;
+}
+
 #body-wrapper {
   width: 620px;
   margin: auto;
@@ -127,17 +131,27 @@ h4 {
 .option-head {
   display: inline-block;
 
-  /*border-bottom: #ac4545 4px solid;*/
+  /* border-bottom: #ac4545 2px solid; */
 
   margin-top: 10px;
-  margin-bottom: 15px;
-
+  margin-bottom: 0px;
   padding-bottom: 0px;
   color: #dddddd;
+  padding-left: 2px;
 }
 .opt-cnt {
   width: 520px;
   padding-left: 20px;
+  padding-top: 15px;
+}
+
+.opt-act.opt-cnt {
+  position: sticky;
+  top: 0;
+  left: 0;
+  padding-bottom: 5px;
+  background: #181818;
+  z-index: 2;
 }
 
 #speed-input {
@@ -201,8 +215,24 @@ h4 {
 }
 
 .li-1 {
-  padding-bottom: 20px;
+  margin-bottom: 20px;
 }
+.scroll-test .li-1 {
+  height: 200px;
+  border: 1px solid #696969;
+  color: #454545;
+  border-radius: 10px;
+  opacity: 0.69;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 69px;
+}
+
+.scroll-test .li-1:hover {
+  background: #232323;
+}
+
 .ul-2,
 .li-2 {
   list-style-type: circle;
@@ -229,7 +259,6 @@ speedInput {
 
 ::selection {
   color: white;
-  /* background: black; */
   background: #1a631e;
 }
 

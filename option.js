@@ -4,7 +4,7 @@ var OSName;
 
 if (navigator.appVersion.indexOf('Win') != -1) OSName = 'Windows';
 if (navigator.appVersion.indexOf('Mac') != -1) OSName = 'MacOS';
-if (navigator.appVersion.indexOf('X11') != -1) OSName = 'UNIX';
+if (navigator.appVersion.indexOf('X11') != -1) OSName = 'Linux';
 if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
 
 (function () {
@@ -389,15 +389,21 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     $('#act-foot').css('display', 'none');
     $('#suggestion').css('display', 'none');
 
-    $('#act-mac').css('display', 'block');
+    $('.act').css('display', 'none');
+    $('.act-mac').css('display', 'inline-block');
     $('.tip').css('display', 'none');
     $('.tip-mac').css('display', 'block');
   } else if (OSName === 'Windows') {
+    $('.act').css('display', 'none');
+    $('.act-win').css('display', 'inline-block');
     $('.tip').css('display', 'none');
-    $('.tip-windows').css('display', 'block');
+    $('.tip-win').css('display', 'block');
   } else if (OSName === 'UNIX' || OSName === 'Linux') {
+    $('.act').css('display', 'none');
+    $('.act-linux').css('display', 'inline-block');
     $('.tip').css('display', 'none');
     $('.tip-linux').css('display', 'block');
+    $('#suggestion').css('display', 'none');
   }
 
   // init

@@ -40,8 +40,6 @@ var Engine = function(newSetting, win, doc) {
     var el;
     var left = [];
     var top = [];
-    var prevScrollAmountX = scrollAmountX;
-    var prevScrollAmountY = scrollAmountY;
 
     el = target;
 
