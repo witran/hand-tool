@@ -95,7 +95,7 @@ var Engine = function(newSetting, win, doc) {
 
       return (Math.abs(scrollAmountX) + Math.abs(scrollAmountY));
     } catch (exception) {
-      console.warn(exception);
+      // console.warn(exception);
     }
   };
 
@@ -147,7 +147,7 @@ var Engine = function(newSetting, win, doc) {
         prevTime = currentTime;
       }, RENDER_INTERVAL));
     } catch (exception) {
-      console.warn(exception);
+      // console.warn(exception);
     }
   };
 
@@ -182,12 +182,15 @@ var HandTool = function(win, doc, chrome, version) {
       reverse: 'yes',
       slide: 'yes',
       scale: '1.5'
-    },
-
-    activation: {
-      mouse: (OSName === 'Linux' || OSName === 'MacOS') ? '2' : '3',
-      key: []
     }
+  }
+
+  if (OSName === 'Windows') {
+    GlobalSetting.activation = { mouse: '3', key: [] };
+  } else if (OSName === 'MacOS') {
+    GlobalSetting.activation = { mouse: '', key: ['ctrlKey'] };
+  } else if (OSName === 'Linux' || OSName === 'UNIX') {
+    GlobalSetting.activation = { mouse: '2', key: [] };
   };
 
   //LOCAL CONTENT APP VARS
@@ -215,6 +218,10 @@ var HandTool = function(win, doc, chrome, version) {
   //handle chrome mousemove fired on click
   var shouldHandleMouseMove = false;
 
+  function hasMouseActivator() {
+    return GlobalSetting.activation.mouse && parseInt(GlobalSetting.activation.mouse);
+  }
+
   //main handler - event forwarder
   function handleMouseDown(e) {
     //request a new scroll session
@@ -226,14 +233,15 @@ var HandTool = function(win, doc, chrome, version) {
 
     shouldHandleMouseMove = true;
 
-    if (GlobalSetting.activation.mouse !== '0' &&
-      GlobalSetting.activation.key[0] === 'ctrlKey') {
-      injectionTargets.push(e.target);
-      injectionTargets.forEach(function(element) {
-        element.webkitUserSelect = 'none';
-      });
-      document.body.style.cursor = '-webkit-grabbing';
-    }
+    // update cursor
+    // if (hasMouseActivator() &&
+    //   GlobalSetting.activation.key[0] === 'ctrlKey') {
+    //   injectionTargets.push(e.target);
+    //   injectionTargets.forEach(function(element) {
+    //     element.style.webkitUserSelect = 'none';
+    //   });
+    //   document.body.style.cursor = '-webkit-grabbing';
+    // }
 
     engine.reset();
 
@@ -296,10 +304,11 @@ var HandTool = function(win, doc, chrome, version) {
 
     shouldHandleMouseMove = false;
 
-    if (GlobalSetting.activation.mouse !== '0' &&
-      GlobalSetting.activation.key[0] === 'ctrlKey') {
-      document.body.style.cursor = '-webkit-grab';
-    }
+    // update cursor
+    // if (!hasMouseActivator() &&
+    //   GlobalSetting.activation.key[0] === 'ctrlKey') {
+    //   document.body.style.cursor = '-webkit-grab';
+    // }
 
     if (current) {
       engine.slide(current);
@@ -312,16 +321,18 @@ var HandTool = function(win, doc, chrome, version) {
     }
   }
 
-  var injectionTargets = [];
+  // var injectionTargets = [];
 
   function handleKeyDown(e) {
-    if (GlobalSetting.activation.mouse !== '0' &&
-      GlobalSetting.activation.key[0] === 'ctrlKey' &&
-      isActivatorKey(e.keyCode)) {
-      document.body.style.webkitUserSelect = 'none';
-      if (document.body.style.cursor.indexOf('-webkit-grab') !== 0)
-        document.body.style.cursor = '-webkit-grab';
-    }
+    if (GlobalSetting.state === 'deactivated') return;
+
+    // update cursor
+    // if (hasMouseActivator() &&
+    //   GlobalSetting.activation.key[0] === 'ctrlKey' &&
+    //   isActivatorKey(e.keyCode)) {
+    //   if (document.body.style.cursor.indexOf('-webkit-grab') !== 0)
+    //     document.body.style.cursor = '-webkit-grab';
+    // }
 
     if (!isLastActivator(e)) return;
 
@@ -330,16 +341,18 @@ var HandTool = function(win, doc, chrome, version) {
   }
 
   function handleKeyUp(e) {
-    if (GlobalSetting.activation.mouse !== '0' &&
-      GlobalSetting.activation.key[0] === 'ctrlKey' &&
-      isActivatorKey(e.keyCode)) {
-      document.body.style.webkitUserSelect = '';
-      injectionTargets.forEach(function(element) {
-        element.webkitUserSelect = '';
-      });
-      injectionTargets = [];
-      document.body.style.cursor = '';
-    }
+    if (GlobalSetting.state === 'deactivated') return;
+
+    // update cursor
+    // if (hasMouseActivator() &&
+    //   GlobalSetting.activation.key[0] === 'ctrlKey' &&
+    //   isActivatorKey(e.keyCode)) {
+    //   injectionTargets.forEach(function(element) {
+    //     element.style.webkitUserSelect = '';
+    //   });
+    //   injectionTargets = [];
+    //   document.body.style.cursor = '';
+    // }
 
     // this is the first of the combination to be removed, or state is already panning
     if (!isActivatorKey(e.keyCode) || (engine.getState() !== 'panning'))
@@ -351,9 +364,13 @@ var HandTool = function(win, doc, chrome, version) {
 
   function isLastActivator(e) {
     // check if extension is deactivated
-    if ((parseInt(GlobalSetting.activation.mouse) !== 0) &&
-      (parseInt(e.which) !== parseInt(GlobalSetting.activation.mouse)) ||
-      (GlobalSetting.state === 'deactivated')) {
+    if (GlobalSetting.state === 'deactivated') {
+      return false;
+    }
+
+    // check if extension is activated by mouse & this isn't the mouse event
+    if (hasMouseActivator() &&
+      parseInt(e.which) !== parseInt(GlobalSetting.activation.mouse)) {
       return false;
     }
 
@@ -373,12 +390,12 @@ var HandTool = function(win, doc, chrome, version) {
         if (GlobalSetting.activation.key[i] == 'ctrlKey')
           return true;
       }
-      // Alt
-    if (keyCode == 18)
-      for (var i = 0; i < GlobalSetting.activation.key.length; i++) {
-        if (GlobalSetting.activation.key[i] == 'altKey')
-          return true;
-      }
+    //   // Alt
+    // if (keyCode == 18)
+    //   for (var i = 0; i < GlobalSetting.activation.key.length; i++) {
+    //     if (GlobalSetting.activation.key[i] == 'altKey')
+    //       return true;
+    //   }
     return false;
   }
 
@@ -454,10 +471,8 @@ var HandTool = function(win, doc, chrome, version) {
     window.addEventListener('mousemove', handleMouseMove, true);
     window.addEventListener('mousedown', handleMouseDown, true);
     window.addEventListener('mouseup', handleMouseUp, true);
-
     window.addEventListener('keydown', handleKeyDown, true);
     window.addEventListener('keyup', handleKeyUp, true);
-
     window.addEventListener('focus', handleFocus, true);
     window.addEventListener('blur', handleBlur, true);
     document.body.addEventListener('contextmenu', handleContextMenu, true);
@@ -479,16 +494,13 @@ var HandTool = function(win, doc, chrome, version) {
     window.removeEventListener('mousemove', handleMouseMove, true);
     window.removeEventListener('mousedown', handleMouseDown, true);
     window.removeEventListener('mouseup', handleMouseUp, true);
-
     window.removeEventListener('keydown', handleKeyDown, true);
     window.removeEventListener('keyup', handleKeyUp, true);
-
     window.removeEventListener('focus', handleFocus, true);
     window.removeEventListener('blur', handleBlur, true);
+    document.body.removeEventListener('contextmenu', handleContextMenu, true);
 
     window.removeEventListener('message', handleMessage, true);
-
-    document.body.removeEventListener('contextmenu', handleContextMenu, true);
   }
 
   this.requestUpdate = requestUpdate;

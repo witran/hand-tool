@@ -285,7 +285,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
       setting.activation.key = ['ctrlKey'];
     } else {
       if (!isValidActChange(actM1)) return;
-      setting.activation.mouse = '0';
+      setting.activation.mouse = '';
     }
     putSetting(setting);
     updateUI();
@@ -298,7 +298,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     } else {
       //click to light is simply turning off
       if (!isValidActChange(actM2)) return;
-      setting.activation.mouse = '0';
+      setting.activation.mouse = '';
     }
     putSetting(setting);
     updateUI();
@@ -311,7 +311,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     } else {
       //click to light is simply turning off
       if (!isValidActChange(actM3)) return;
-      setting.activation.mouse = '0';
+      setting.activation.mouse = '';
     }
     putSetting(setting);
     updateUI();
@@ -331,7 +331,7 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
   $('#pref-2').click(function () {
     setting.state = 'activated';
     setting.scroll.scale = '1.5';
-    setting.activation.mouse = '0';
+    setting.activation.mouse = '';
     setting.activation.key = ['ctrlKey'];
 
     putSetting(setting);
@@ -394,11 +394,15 @@ if (navigator.appVersion.indexOf('Linux') != -1) OSName = 'Linux';
     $('.tip').css('display', 'none');
     $('.tip-mac').css('display', 'block');
   } else if (OSName === 'Windows') {
+    defaultSetting.activation.mouse = '2';
+    defaultSetting.activation.key = [];
     $('.act').css('display', 'none');
     $('.act-win').css('display', 'inline-block');
     $('.tip').css('display', 'none');
     $('.tip-win').css('display', 'block');
   } else if (OSName === 'UNIX' || OSName === 'Linux') {
+    defaultSetting.activation.mouse = '3';
+    defaultSetting.activation.key = [];
     $('.act').css('display', 'none');
     $('.act-linux').css('display', 'inline-block');
     $('.tip').css('display', 'none');
