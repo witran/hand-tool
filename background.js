@@ -28,8 +28,18 @@ if (OSName === 'Windows') {
   defaultSetting.activation = { mouse: '3', key: [] };
 } else if (OSName === 'MacOS') {
   defaultSetting.activation = { mouse: '', key: ['ctrlKey'] };
+  const setting = getLocalSetting();
+  if (setting && setting.activation) {
+    setting.activation = { mouse: '', key: ['ctrlKey'] };
+    localStorage.setting = JSON.stringify(setting);
+  }
 } else if (OSName === 'Linux' || OSName === 'UNIX') {
   defaultSetting.activation = { mouse: '2', key: [] };
+  const setting = getLocalSetting();
+  if (setting && setting.activation && setting.activation.mouse === 3) {
+    setting.activation = { mouse: '2', key: [] };
+    localStorage.setting = JSON.stringify(setting);
+  }
 }
 
 function getLocalSetting() {
