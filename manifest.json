@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Hand Tool",
     "description": "Use your Mouse or Stylus to grab and pan web pages",
-    "version": "1.8.0",
+    "version": "1.9.0",
     "permissions": [
         "tabs",
         "http://*/*",
